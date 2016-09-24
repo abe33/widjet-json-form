@@ -1,0 +1,82 @@
+{
+  "name": "widjet-json-form",
+  "version": "0.0.0",
+  "description": "A widget to generate forms using a json object descriptor",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "nyc mocha --recursive --compilers js:babel-register test/**/*.es6 test/*.es6",
+    "lcov_report": "nyc report --reporter=lcov",
+    "babel": "babel src --out-dir lib",
+    "standard": "standard src/*.es6 test/*.es6",
+    "esdoc": "esdoc -c esdoc.json",
+    "install": "npm run babel"
+  },
+  "keywords": [
+    "widgets",
+    "widget",
+    "web",
+    "widjet",
+    "form",
+    "json form"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/abe33/widjet-json-form.git"
+  },
+  "bugs": "http://github.com/abe33/widjet-json-form/issues",
+  "commits": "http://github.com/abe33/widjet-json-form/commits",
+  "author": "Cédric Néhémie <cedric.nehemie@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-eslint": "^4.1.6",
+    "babel-preset-stage-2": "^6.13.0",
+    "babel-register": "^6.3.13",
+    "esdoc": "^0.4.0",
+    "expect.js": "^0.3.1",
+    "mocha": "^2.3.4",
+    "mocha-jsdom": "^1.1.0",
+    "nyc": "^8.3.0",
+    "sinon": "^1.17.4",
+    "standard": "^5.4.1"
+  },
+  "dependencies": {
+    "babel-cli": "^6.3.17",
+    "babel-preset-es2015": "^6.3.13",
+    "widjet": "*",
+    "widjet-utils": "*",
+    "widjet-disposables": "*"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "globals": [
+      "it",
+      "describe",
+      "beforeEach",
+      "afterEach"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-2"
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "istanbul"
+        ]
+      }
+    }
+  },
+  "nyc": {
+    "include": [
+      "src/*.es6"
+    ],
+    "extension": [
+      ".es6"
+    ],
+    "require": [
+      "babel-register"
+    ]
+  }
+}
