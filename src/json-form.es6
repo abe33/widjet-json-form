@@ -6,6 +6,8 @@ export default class JSONForm {
   static FORM_WRAPPER_TEMPLATE_PATH = 'templates/form/form-wrapper'
   static FIELD_WRAPPER_TEMPLATE_PATH = 'templates/form/field-wrapper'
   static FIELDSET_TEMPLATE_PATH = 'templates/form/fieldset-wrapper'
+  static ARRAY_WRAPPER_TEMPLATE_PATH = 'templates/form/array-wrapper'
+  static ARRAY_ITEM_WRAPPER_TEMPLATE_PATH = 'templates/form/array-item-wrapper'
 
   static getTemplate (key) { return window.JST[key] }
 
@@ -43,6 +45,17 @@ export default class JSONForm {
         case 'object':
           return memo + this.jst(JSONForm.FIELDSET_TEMPLATE_PATH, merge(base, {
             content: this.renderObject(parameters.properties, values[setting], name)
+          }))
+        case 'array':
+          const itemsType = parameters.items
+          return memo + this.jst(JSONForm.ARRAY_WRAPPER_TEMPLATE_PATH, merge(base, {
+            content: (values[setting] || []).map((value, i) => {
+              return this.jst(JSONForm.ARRAY_ITEM_WRAPPER_TEMPLATE_PATH, {
+                content: this.renderObject({
+                  [`${i}`]: itemsType
+                }, value, `${objectName}[${i}]`)
+              })
+            })
           }))
         default:
           return memo + this.getField(type, merge(base, {

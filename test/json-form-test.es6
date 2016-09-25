@@ -61,6 +61,35 @@ describe('JSONForm', () => {
         expect(form.render()).to.eql('<form><fieldset><legend>object</legend><div class="field string">title:string</div><div class="field string">description:string</div><div class="field markdown">content:markdown</div></fieldset></form>')
       })
     })
+
+    describe('when the schema has a field of type array', () => {
+      it('generates an array item for each item in the value', () => {
+        const form = new JSONForm({
+          schema: {
+            array: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  title: 'string',
+                  description: '{"type": "string"}',
+                  content: {
+                    type: 'markdown'
+                  }
+                }
+              }
+            }
+          },
+          values: {
+            array: [
+              {title: 'foo', description: 'baz', content: 'bar'}
+            ]
+          }
+        })
+
+        expect(form.render()).to.eql('<form><ul><li><fieldset><legend>0</legend><div class="field string">title:string</div><div class="field string">description:string</div><div class="field markdown">content:markdown</div></fieldset></li></ul></form>')
+      })
+    })
   })
 
   describe('.render()', () => {
