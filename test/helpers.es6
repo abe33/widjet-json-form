@@ -1,5 +1,7 @@
 import {evaluateKey} from '../src/utils'
 
+export const compactHTML = str => str.trim().replace(/>\s+</g, '><')
+
 export const getTemplate = str => data =>
   str.replace(/\{\{([^}]+)\}\}/g, (m, k) => evaluateKey(k.trim(), data))
 

@@ -17,8 +17,8 @@ export default class JSONForm {
   }
 
   constructor (options = {}) {
-    this.schema = options.schema || {}
-    this.values = options.values || {}
+    this.schema = options.schema
+    this.values = options.values
     this.id = options.id || getNextID()
   }
 

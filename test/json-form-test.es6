@@ -1,7 +1,7 @@
 import expect from 'expect.js'
 import jsdom from 'mocha-jsdom'
 
-import {loadTemplates} from './helpers'
+import {loadTemplates, compactHTML} from './helpers'
 import JSONForm from '../src/json-form'
 
 describe('JSONForm', () => {
@@ -21,7 +21,13 @@ describe('JSONForm', () => {
           }
         })
 
-        expect(form.render()).to.eql('<form><div class="field string">title:string</div><div class="field string">description:string</div><div class="field markdown">content:markdown</div></form>')
+        expect(form.render()).to.eql(compactHTML(`
+          <form>
+            <div class="field string">title:string</div>
+            <div class="field string">description:string</div>
+            <div class="field markdown">content:markdown</div>
+          </form>
+        `))
       })
     })
 
@@ -58,36 +64,93 @@ describe('JSONForm', () => {
           }
         })
 
-        expect(form.render()).to.eql('<form><fieldset><legend>object</legend><div class="field string">title:string</div><div class="field string">description:string</div><div class="field markdown">content:markdown</div></fieldset></form>')
+        expect(form.render()).to.eql(compactHTML(`
+          <form>
+            <fieldset>
+              <legend>object</legend>
+              <div class="field string">title:string</div>
+              <div class="field string">description:string</div>
+              <div class="field markdown">content:markdown</div>
+            </fieldset>
+          </form>
+        `))
       })
     })
 
     describe('when the schema has a field of type array', () => {
-      it('generates an array item for each item in the value', () => {
-        const form = new JSONForm({
-          schema: {
-            array: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  title: 'string',
-                  description: '{"type": "string"}',
-                  content: {
-                    type: 'markdown'
+      describe('with no values', () => {
+        it('generates a form for an empty array', () => {
+          const form = new JSONForm({
+            schema: {
+              array: {
+                type: 'array',
+                items: 'string'
+              }
+            }
+          })
+
+          expect(form.render()).to.eql('<form><ul></ul></form>')
+        })
+      })
+
+      describe('for primitive items', () => {
+        it('generates an array item for each item in the value', () => {
+          const form = new JSONForm({
+            schema: {
+              array: {
+                type: 'array',
+                items: 'string'
+              }
+            },
+            values: { array: ['foo'] }
+          })
+
+          expect(form.render()).to.eql(compactHTML(`
+            <form>
+              <ul>
+                <li><div class="field string">0:string</div></li>
+              </ul>
+            </form>
+          `))
+        })
+      })
+
+      describe('for object items', () => {
+        it('generates an array item for each item in the value', () => {
+          const form = new JSONForm({
+            schema: {
+              array: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    title: 'string',
+                    description: '{"type": "string"}',
+                    content: { type: 'markdown' }
                   }
                 }
               }
+            },
+            values: {
+              array: [ {title: 'foo', description: 'baz', content: 'bar'} ]
             }
-          },
-          values: {
-            array: [
-              {title: 'foo', description: 'baz', content: 'bar'}
-            ]
-          }
-        })
+          })
 
-        expect(form.render()).to.eql('<form><ul><li><fieldset><legend>0</legend><div class="field string">title:string</div><div class="field string">description:string</div><div class="field markdown">content:markdown</div></fieldset></li></ul></form>')
+          expect(form.render()).to.eql(compactHTML(`
+            <form>
+              <ul>
+                <li>
+                  <fieldset>
+                    <legend>0</legend>
+                    <div class="field string">title:string</div>
+                    <div class="field string">description:string</div>
+                    <div class="field markdown">content:markdown</div>
+                  </fieldset>
+                </li>
+              </ul>
+            </form>
+          `))
+        })
       })
     })
   })
@@ -102,7 +165,13 @@ describe('JSONForm', () => {
         }
       })
 
-      expect(html).to.eql('<form><div class="field string">title:string</div><div class="field string">description:string</div><div class="field markdown">content:markdown</div></form>')
+      expect(html).to.eql(compactHTML(`
+        <form>
+          <div class="field string">title:string</div>
+          <div class="field string">description:string</div>
+          <div class="field markdown">content:markdown</div>
+        </form>
+      `))
     })
   })
 })
