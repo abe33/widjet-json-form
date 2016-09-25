@@ -1,12 +1,11 @@
-let nextID = 0
-
-const isJSON = s => s.match(/^\{|^\[/)
-const getNextID = () => nextID++
+import {merge} from 'widjet-utils'
+import {asTuple, fieldName, getNextID, getTypeAndParameters} from './utils'
 
 export default class JSONForm {
   static TEMPLATE_PATH_PREFIX = 'templates/form/'
   static FORM_WRAPPER_TEMPLATE_PATH = 'templates/form/form-wrapper'
   static FIELD_WRAPPER_TEMPLATE_PATH = 'templates/form/field-wrapper'
+  static FIELDSET_TEMPLATE_PATH = 'templates/form/fieldset-wrapper'
 
   static getTemplate (key) { return window.JST[key] }
 
@@ -22,36 +21,35 @@ export default class JSONForm {
   }
 
   render () {
-    let content = ''
-
-    for (let setting in this.schema) {
-      let type = this.schema[setting]
-
-      const id = `${setting}-${this.id}`
-      let parameters = {}
-
-      if (typeof type === 'string' && isJSON(type)) {
-        type = JSON.parse(type)
-      }
-
-      if (type && typeof type === 'object') {
-        parameters = type
-        type = type.type
-      }
-
-      content += this.getField(type, {
-        id,
-        type,
-        setting,
-        parameters,
-        value: this.values[setting]
-      })
-    }
+    const content = this.renderObject(this.schema, this.values)
 
     return this.jst(JSONForm.FORM_WRAPPER_TEMPLATE_PATH, {
       id: this.id,
       content
     })
+  }
+
+  renderObject (object = {}, values = {}, objectName) {
+    return asTuple(object).map(([key, value]) => {
+      const id = `${key}-${this.id}`
+      const [type, parameters] = getTypeAndParameters(value)
+
+      return {id, type, parameters, setting: key}
+    }).reduce((memo, {id, type, setting, parameters}) => {
+      const name = fieldName(setting, objectName)
+      const base = {id, name, type, setting, parameters}
+
+      switch (type) {
+        case 'object':
+          return memo + this.jst(JSONForm.FIELDSET_TEMPLATE_PATH, merge(base, {
+            content: this.renderObject(parameters.properties, values[setting], name)
+          }))
+        default:
+          return memo + this.getField(type, merge(base, {
+            value: values[setting]
+          }))
+      }
+    }, '')
   }
 
   getField (type, options) {

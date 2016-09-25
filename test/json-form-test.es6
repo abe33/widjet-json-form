@@ -40,6 +40,27 @@ describe('JSONForm', () => {
         expect(form.id).to.eql('foo')
       })
     })
+
+    describe('when the schema has a field of type object', () => {
+      it('wraps the nested fields in a fieldset wrapper', () => {
+        const form = new JSONForm({
+          schema: {
+            object: {
+              type: 'object',
+              properties: {
+                title: 'string',
+                description: '{"type": "string"}',
+                content: {
+                  type: 'markdown'
+                }
+              }
+            }
+          }
+        })
+
+        expect(form.render()).to.eql('<form><fieldset><legend>object</legend><div class="field string">title:string</div><div class="field string">description:string</div><div class="field markdown">content:markdown</div></fieldset></form>')
+      })
+    })
   })
 
   describe('.render()', () => {
