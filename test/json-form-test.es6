@@ -68,9 +68,9 @@ describe('JSONForm', () => {
           <form>
             <fieldset>
               <legend>object</legend>
-              <div class="field string">title:string</div>
-              <div class="field string">description:string</div>
-              <div class="field markdown">content:markdown</div>
+              <div class="field string">object[title]:string</div>
+              <div class="field string">object[description]:string</div>
+              <div class="field markdown">object[content]:markdown</div>
             </fieldset>
           </form>
         `))
@@ -108,7 +108,7 @@ describe('JSONForm', () => {
           expect(form.render()).to.eql(compactHTML(`
             <form>
               <ul>
-                <li><div class="field string">0:string</div></li>
+                <li><div class="field string">array[0]:string</div></li>
               </ul>
             </form>
           `))
@@ -141,10 +141,10 @@ describe('JSONForm', () => {
               <ul>
                 <li>
                   <fieldset>
-                    <legend>0</legend>
-                    <div class="field string">title:string</div>
-                    <div class="field string">description:string</div>
-                    <div class="field markdown">content:markdown</div>
+                    <legend>array[0]</legend>
+                    <div class="field string">array[0][title]:string</div>
+                    <div class="field string">array[0][description]:string</div>
+                    <div class="field markdown">array[0][content]:markdown</div>
                   </fieldset>
                 </li>
               </ul>

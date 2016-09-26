@@ -34,40 +34,43 @@ export default class JSONForm {
   renderObject (object = {}, values = {}, objectName) {
     return asTuple(object).map(([key, value]) => {
       const id = `${key}-${this.id}`
+      const name = fieldName(key, objectName)
       const [type, parameters] = getTypeAndParameters(value)
 
-      return {id, type, parameters, setting: key}
-    }).reduce((memo, {id, type, setting, parameters}) => {
-      const name = fieldName(setting, objectName)
-      const base = {id, name, type, setting, parameters}
-
-      switch (type) {
-        case 'object':
-          return memo + this.jst(JSONForm.FIELDSET_TEMPLATE_PATH, merge(base, {
-            content: this.renderObject(parameters.properties, values[setting], name)
-          }))
-        case 'array':
-          const itemsType = parameters.items
-          return memo + this.jst(JSONForm.ARRAY_WRAPPER_TEMPLATE_PATH, merge(base, {
-            content: (values[setting] || []).map((value, i) => {
-              return this.jst(JSONForm.ARRAY_ITEM_WRAPPER_TEMPLATE_PATH, {
-                content: this.renderObject({
-                  [`${i}`]: itemsType
-                }, value, `${objectName}[${i}]`)
-              })
-            })
-          }))
-        default:
-          return memo + this.getField(type, merge(base, {
-            value: values[setting]
-          }))
-      }
-    }, '')
+      return {id, type, parameters, name, attribute: key, value: values[key]}
+    })
+    .map(params => this.renderField(params))
+    .reduce((memo, str) => memo + str, '')
   }
 
-  getField (type, options) {
+  renderField (opts = {}) {
+    switch (opts.type) {
+      case 'object':
+        return this.jst(JSONForm.FIELDSET_TEMPLATE_PATH, merge(opts, {
+          content: this.renderObject(opts.parameters.properties, opts.value, opts.name)
+        }))
+      case 'array':
+        const itemsType = opts.parameters.items
+
+        const renderContent = i =>
+          this.renderObject({[i]: itemsType}, opts.value, opts.name)
+
+        const renderItems = (value, i) =>
+          this.jst(JSONForm.ARRAY_ITEM_WRAPPER_TEMPLATE_PATH, {
+            content: renderContent(i)
+          })
+
+        return this.jst(JSONForm.ARRAY_WRAPPER_TEMPLATE_PATH, merge(opts, {
+          content: (opts.value || []).map(renderItems)
+        }))
+      default:
+        return this.getField(opts)
+    }
+  }
+
+  getField (options) {
     return this.jst(JSONForm.FIELD_WRAPPER_TEMPLATE_PATH, {
-      content: this.jst(`${JSONForm.TEMPLATE_PATH_PREFIX}${type}`, options),
+      content: this.jst(`${JSONForm.TEMPLATE_PATH_PREFIX}${options.type}`, options),
       options
     })
   }
