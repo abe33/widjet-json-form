@@ -64,15 +64,10 @@ export default class JSONForm {
           content: (opts.value || []).map(renderItems)
         }))
       default:
-        return this.getField(opts)
+        return this.jst(JSONForm.FIELD_WRAPPER_TEMPLATE_PATH, merge(opts, {
+          content: this.jst(`${JSONForm.TEMPLATE_PATH_PREFIX}${opts.type}`, opts)
+        }))
     }
-  }
-
-  getField (options) {
-    return this.jst(JSONForm.FIELD_WRAPPER_TEMPLATE_PATH, {
-      content: this.jst(`${JSONForm.TEMPLATE_PATH_PREFIX}${options.type}`, options),
-      options
-    })
   }
 
   jst (key, data) { return JSONForm.getTemplate(key)(data) }
