@@ -4,7 +4,7 @@
   "description": "A widget to generate forms using a json object descriptor",
   "main": "lib/index.js",
   "scripts": {
-    "test": "nyc mocha --recursive --compilers js:babel-register test/**/*.es6 test/*.es6",
+    "test": "nyc mocha --timeout 5000 --recursive --compilers js:babel-register test/**/*.es6 test/*.es6",
     "lcov_report": "nyc report --reporter=lcov",
     "babel": "babel src --out-dir lib",
     "standard": "standard src/*.es6 test/*.es6",
