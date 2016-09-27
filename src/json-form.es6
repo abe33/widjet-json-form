@@ -11,10 +11,7 @@ export default class JSONForm {
 
   static getTemplate (key) { return window.JST[key] }
 
-  static render (schema, values) {
-    let form = new JSONForm({schema, values})
-    return form.render()
-  }
+  static render (schema, values) { new JSONForm({schema, values}).render() }
 
   constructor (options = {}) {
     this.schema = options.schema
