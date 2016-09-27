@@ -87,4 +87,30 @@ describe('json-form', () => {
       `))
     })
   })
+
+  describe('with custom templates in the options', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
+        </div>
+      `
+
+      target = document.querySelector('[data-schema]')
+
+      widgets('json-form', '[data-schema]', {
+        on: 'init',
+        formTemplate: getTemplate('<div>{{ content }}</div>'),
+        fieldTemplate: getTemplate('<div>{{ content }}</div>')
+      })
+    })
+
+    it('uses the provided templates in priority', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <div>
+          <div>title:string</div>
+          <div>content:markdown</div>
+        </div>
+      `))
+    })
+  })
 })

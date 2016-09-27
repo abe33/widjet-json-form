@@ -7,8 +7,9 @@ export const formRenderer = curry2((options, data) => {
   const {schema, values} = data
   const id = data.id || getNextID()
 
-  const renderers = (options.renderers || [])
-  .map(([p, r]) => [p, r((a, b, c) => renderObject(a, b, c))])
+  const renderers = options.renderers.map(([p, r]) => [
+    p, r((a, b, c) => renderObject(a, b, c))
+  ])
 
   const renderObject = objectRenderer(id, when(renderers))
 

@@ -15,7 +15,7 @@ export function getTypeAndParameters (type) {
     type = JSON.parse(type)
   }
 
-  if (type && typeof type === 'object') {
+  if (type && type.type) {
     parameters = type
     type = type.type
   }
