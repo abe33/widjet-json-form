@@ -41,7 +41,7 @@ describe('json-form', () => {
     })
   })
 
-  describe('with values', () => {
+  describe('with a data-values attribute', () => {
     beforeEach(() => {
       document.body.innerHTML = `
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
@@ -62,6 +62,36 @@ describe('json-form', () => {
         <form>
           <div class="field string">title=foo</div>
           <div class="field markdown">content=bar</div>
+        </form>
+      `))
+    })
+  })
+
+  describe('with a data-id attribute', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
+             data-id="foo">
+        </div>
+      `
+
+      window.JST['templates/form/form'] = getTemplate(compactHTML(`
+        <form id="{{ id }}">{{ content }}</div>
+      `))
+      window.JST['templates/form/field'] = getTemplate(compactHTML(`
+        <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
+      `))
+
+      target = document.querySelector('[data-schema]')
+
+      widgets('json-form', '[data-schema]', {on: 'init'})
+    })
+
+    it('parses the value and passes them to the widget form', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form id="foo">
+          <div class="field string" id="title-foo">title:string</div>
+          <div class="field markdown" id="content-foo">content:markdown</div>
         </form>
       `))
     })
