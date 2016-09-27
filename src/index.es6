@@ -1,20 +1,42 @@
 import widgets from 'widjet'
-import {getNode} from 'widjet-utils'
-import JSONForm from './json-form'
+import {getNode, curry2, when, always} from 'widjet-utils'
+import {typeIs, objectRenderer, renderObjectField, renderArrayField, renderDefaultField} from './renderers'
+import {getNextID} from './utils'
 
-widgets.define('json-form', (container) => {
-  let valuesString
+export const formRenderer = curry2((options, data) => {
+  const {schema, values} = data
+  const id = data.id || getNextID()
 
+  const renderers = (options.renderers || [])
+  .map(([p, r]) => [p, r((a, b, c) => renderObject(a, b, c))])
+
+  const renderField = when(renderers)
+  const renderObject = objectRenderer(id, renderField)
+
+  return options.formTemplate({ id, content: renderObject(schema, values) })
+})
+
+widgets.define('json-form', (container, options) => {
+  const tpl = s => options[`${s}Template`] || window.JST[`templates/form/${s}`]
+  const DEFAULT_RENDERERS = [
+    [typeIs('object'), renderObjectField(tpl('object'))],
+    [typeIs('array'), renderArrayField(tpl('array'), tpl('arrayItem'))],
+    [always, renderDefaultField(tpl('field'), t => tpl(t))]
+  ]
   const schema = JSON.parse(container.getAttribute('data-form'))
-  const values = (valuesString = container.getAttribute('data-values')) != null
-    ? JSON.parse(valuesString)
+  const values = container.hasAttribute('data-values')
+    ? JSON.parse(container.getAttribute('data-values'))
     : {}
 
+  const render = formRenderer({
+    formTemplate: tpl('form'),
+    renderers: (options.renderers || []).concat(DEFAULT_RENDERERS)
+  })
+
   const id = container.getAttribute('data-id')
-  const form = new JSONForm({schema, values, id})
-  container.formWidget = form
+  container.appendChild(getNode(render({schema, values, id})))
 
-  container.appendChild(getNode(form.render()))
-
-  window.requestAnimationFrame(() => widgets.dispatch('json-form:ready', {form}))
+  window.requestAnimationFrame(() =>
+    widgets.dispatch(container, 'json-form:ready')
+  )
 })

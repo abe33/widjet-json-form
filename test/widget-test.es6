@@ -3,7 +3,7 @@ import jsdom from 'mocha-jsdom'
 import widgets from 'widjet'
 import sinon from 'sinon'
 
-import {loadTemplates} from './helpers'
+import {loadTemplates, getTemplate, compactHTML} from './helpers'
 import '../src/index'
 
 describe('json-form', () => {
@@ -15,7 +15,8 @@ describe('json-form', () => {
   describe('without values', () => {
     beforeEach(() => {
       document.body.innerHTML = `
-      <div data-form='{"title": "string", "content": {"type": "markdown"}}'></div>
+        <div data-form='{"title": "string", "content": {"type": "markdown"}}'>
+        </div>
       `
 
       spy = sinon.spy()
@@ -27,7 +28,12 @@ describe('json-form', () => {
     })
 
     it('fills the specified target with a form generated using the data provided', () => {
-      expect(target.innerHTML).to.eql('<form><div class="field string">title:string</div><div class="field markdown">content:markdown</div></form>')
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>
+          <div class="field string">title:string</div>
+          <div class="field markdown">content:markdown</div>
+        </form>
+      `))
     })
 
     it('emits a json-form:ready event', () => {
@@ -38,8 +44,13 @@ describe('json-form', () => {
   describe('with values', () => {
     beforeEach(() => {
       document.body.innerHTML = `
-      <div data-form='{"title": "string", "content": {"type": "markdown"}}' data-values='{"title": "foo", "content": "bar"}'></div>
+        <div data-form='{"title": "string", "content": {"type": "markdown"}}'
+             data-values='{"title": "foo", "content": "bar"}'>
+        </div>
       `
+
+      window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
+      window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
 
       target = document.querySelector('[data-form]')
 
@@ -47,10 +58,33 @@ describe('json-form', () => {
     })
 
     it('parses the value and passes them to the widget form', () => {
-      expect(target.formWidget.values).to.eql({
-        title: 'foo',
-        content: 'bar'
-      })
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>
+          <div class="field string">title=foo</div>
+          <div class="field markdown">content=bar</div>
+        </form>
+      `))
+    })
+  })
+
+  describe('with custom renderers in the options', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-form='{"title": "string", "content": {"type": "markdown"}}'
+        </div>
+      `
+
+      target = document.querySelector('[data-form]')
+
+      widgets('json-form', '[data-form]', {on: 'init', renderers: [
+        [a => true, a => b => 'foo']
+      ]})
+    })
+
+    it('uses the provided renderers in priority', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>foofoo</form>
+      `))
     })
   })
 })
