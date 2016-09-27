@@ -10,8 +10,7 @@ export const formRenderer = curry2((options, data) => {
   const renderers = (options.renderers || [])
   .map(([p, r]) => [p, r((a, b, c) => renderObject(a, b, c))])
 
-  const renderField = when(renderers)
-  const renderObject = objectRenderer(id, renderField)
+  const renderObject = objectRenderer(id, when(renderers))
 
   return options.formTemplate({ id, content: renderObject(schema, values) })
 })
@@ -23,7 +22,7 @@ widgets.define('json-form', (container, options) => {
     [typeIs('array'), renderArrayField(tpl('array'), tpl('arrayItem'))],
     [always, renderDefaultField(tpl('field'), t => tpl(t))]
   ]
-  const schema = JSON.parse(container.getAttribute('data-form'))
+  const schema = JSON.parse(container.getAttribute('data-schema'))
   const values = container.hasAttribute('data-values')
     ? JSON.parse(container.getAttribute('data-values'))
     : {}

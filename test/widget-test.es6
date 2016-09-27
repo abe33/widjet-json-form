@@ -15,16 +15,16 @@ describe('json-form', () => {
   describe('without values', () => {
     beforeEach(() => {
       document.body.innerHTML = `
-        <div data-form='{"title": "string", "content": {"type": "markdown"}}'>
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'>
         </div>
       `
 
       spy = sinon.spy()
-      target = document.querySelector('[data-form]')
+      target = document.querySelector('[data-schema]')
 
       document.addEventListener('json-form:ready', spy)
 
-      widgets('json-form', '[data-form]', {on: 'init'})
+      widgets('json-form', '[data-schema]', {on: 'init'})
     })
 
     it('fills the specified target with a form generated using the data provided', () => {
@@ -44,7 +44,7 @@ describe('json-form', () => {
   describe('with values', () => {
     beforeEach(() => {
       document.body.innerHTML = `
-        <div data-form='{"title": "string", "content": {"type": "markdown"}}'
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
              data-values='{"title": "foo", "content": "bar"}'>
         </div>
       `
@@ -52,9 +52,9 @@ describe('json-form', () => {
       window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
       window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
 
-      target = document.querySelector('[data-form]')
+      target = document.querySelector('[data-schema]')
 
-      widgets('json-form', '[data-form]', {on: 'init'})
+      widgets('json-form', '[data-schema]', {on: 'init'})
     })
 
     it('parses the value and passes them to the widget form', () => {
@@ -70,13 +70,13 @@ describe('json-form', () => {
   describe('with custom renderers in the options', () => {
     beforeEach(() => {
       document.body.innerHTML = `
-        <div data-form='{"title": "string", "content": {"type": "markdown"}}'
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
         </div>
       `
 
-      target = document.querySelector('[data-form]')
+      target = document.querySelector('[data-schema]')
 
-      widgets('json-form', '[data-form]', {on: 'init', renderers: [
+      widgets('json-form', '[data-schema]', {on: 'init', renderers: [
         [a => true, a => b => 'foo']
       ]})
     })
