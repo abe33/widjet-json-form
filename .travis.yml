@@ -9,3 +9,6 @@ node_js:
 script:
   - npm run standard
   - npm test
+
+after_success:
+  - npm run coverage
