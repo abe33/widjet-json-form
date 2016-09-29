@@ -17,6 +17,15 @@ import 'widjet-json-form'
 widgets('json-form', '[data-schema]', {on: 'load'})
 ```
 
+```html
+<div data-schema='{"title": "string", "content": "markdown", "publishedAt": "datetime"}'
+     data-values='{"title": "Here&quo;s a title", "content": "Then some content", publishedAt: "2016-09-08T20:35:54.855Z"}'
+     data-id='news-form'>
+</div>
+```
+
+The `json-form` widget generates a form in the target element by reading the schema defined in the element data attributes. Initial values or the base id  for the form and its fields can be passed through data attributes as well.
+
 ### Form Schema
 
 ```json
