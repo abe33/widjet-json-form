@@ -18,12 +18,14 @@ export const formRenderer = curry2((options, data) => {
 
 widgets.define('json-form', (container, options) => {
   const tpl = s => options[`${s}Template`] || window.JST[`templates/form/${s}`]
+  const schemaAttribute = options.schemaAttribute || 'data-schema'
+
   const DEFAULT_RENDERERS = [
     [typeIs('object'), renderObjectField(tpl('object'))],
     [typeIs('array'), renderArrayField(tpl('array'), tpl('arrayItem'))],
     [always, renderDefaultField(tpl('field'), t => tpl(t))]
   ]
-  const schema = JSON.parse(container.getAttribute('data-schema'))
+  const schema = JSON.parse(container.getAttribute(schemaAttribute))
   const values = container.hasAttribute('data-values')
     ? JSON.parse(container.getAttribute('data-values'))
     : {}

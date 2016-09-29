@@ -143,4 +143,29 @@ describe('json-form', () => {
       `))
     })
   })
+
+  describe('with a custom schema attribute', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-form='{"title": "string", "content": {"type": "markdown"}}'>
+        </div>
+      `
+
+      spy = sinon.spy()
+      target = document.querySelector('[data-form]')
+
+      document.addEventListener('json-form:ready', spy)
+
+      widgets('json-form', '[data-form]', {on: 'init', schemaAttribute: 'data-form'})
+    })
+
+    it('uses the data from the custom schema attribute', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>
+          <div class="field string">title:string</div>
+          <div class="field markdown">content:markdown</div>
+        </form>
+      `))
+    })
+  })
 })
