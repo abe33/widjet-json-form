@@ -168,4 +168,30 @@ describe('json-form', () => {
       `))
     })
   })
+
+  describe('with a custom values attribute', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
+             data-content='{"title": "foo", "content": "bar"}'>
+        </div>
+      `
+
+      window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
+      window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
+
+      target = document.querySelector('[data-schema]')
+
+      widgets('json-form', '[data-schema]', {on: 'init', valueAttribute: 'data-content'})
+    })
+
+    it('parses the value and passes them to the widget form', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>
+          <div class="field string">title=foo</div>
+          <div class="field markdown">content=bar</div>
+        </form>
+      `))
+    })
+  })
 })
