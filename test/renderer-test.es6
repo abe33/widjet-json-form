@@ -3,7 +3,7 @@ import jsdom from 'mocha-jsdom'
 import {always} from 'widjet-utils'
 
 import {formRenderer} from '../src/index'
-import {loadTemplates, compactHTML} from './helpers'
+import {loadTemplates, getTemplate, compactHTML} from './helpers'
 import {typeIs, renderObjectField, renderArrayField, renderDefaultField} from '../src/renderers'
 
 describe('formRenderer() generated function', () => {
@@ -112,6 +112,8 @@ describe('formRenderer() generated function', () => {
 
     describe('for primitive items', () => {
       it('generates an array item for each item in the value', () => {
+        window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
+
         const html = render({
           schema: {
             array: {
@@ -125,7 +127,7 @@ describe('formRenderer() generated function', () => {
         expect(html).to.eql(compactHTML(`
           <form>
             <ul>
-              <li><div class="field string">array[0]:string</div></li>
+              <li><div class="field string">array[0]=foo</div></li>
             </ul>
           </form>
         `))
@@ -134,6 +136,9 @@ describe('formRenderer() generated function', () => {
 
     describe('for object items', () => {
       it('generates an array item for each item in the value', () => {
+        window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
+        window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
+
         const html = render({
           schema: {
             array: {
@@ -159,9 +164,9 @@ describe('formRenderer() generated function', () => {
               <li>
                 <fieldset>
                   <legend>array[0]</legend>
-                  <div class="field string">array[0][title]:string</div>
-                  <div class="field string">array[0][description]:string</div>
-                  <div class="field markdown">array[0][content]:markdown</div>
+                  <div class="field string">array[0][title]=foo</div>
+                  <div class="field string">array[0][description]=baz</div>
+                  <div class="field markdown">array[0][content]=bar</div>
                 </fieldset>
               </li>
             </ul>
