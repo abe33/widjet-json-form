@@ -12,7 +12,7 @@ describe('json-form', () => {
 
   let target, spy
 
-  describe('without values', () => {
+  describe('with a data-schema attribute', () => {
     beforeEach(() => {
       document.body.innerHTML = `
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'>
@@ -40,6 +40,40 @@ describe('json-form', () => {
       expect(spy.called).to.be.ok()
     })
   })
+
+  describe('with a schema in a script tag and a data-source attribute', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <script id='source' type='application/json'>
+          {
+            "title": "string",
+            "content": {
+              "type": "markdown"
+            }
+          }
+        </script>
+        <div data-schema-source='source'></div>
+      `
+
+      target = document.querySelector('[data-schema-source]')
+
+      widgets('json-form', '[data-schema-source]', {on: 'init'})
+    })
+
+    it('fills the specified target with a form generated using the data provided', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>
+          <div class="field string">title:string</div>
+          <div class="field markdown">content:markdown</div>
+        </form>
+      `))
+    })
+
+    it('emits a json-form:ready event', () => {
+      expect(spy.called).to.be.ok()
+    })
+  })
+
 
   describe('with a data-values attribute', () => {
     beforeEach(() => {

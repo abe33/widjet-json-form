@@ -3,6 +3,10 @@ import {getNode, curry2, when, always} from 'widjet-utils'
 import {typeIs, objectRenderer, renderObjectField, renderArrayField, renderDefaultField} from './renderers'
 import {getNextID} from './utils'
 
+const jsonAttribute = (node, attr) => JSON.parse(node.getAttribute(attr))
+const jsonSourceAttribute = (node, attr) =>
+  JSON.parse(document.getElementById(node.getAttribute(attr)).textContent)
+
 export const formRenderer = curry2((options, data) => {
   const {schema, values} = data
   const id = data.id || getNextID()
@@ -25,6 +29,7 @@ widgets.define('json-form', (container, options) => {
   const tpl = options.findTemplate || (s =>
     options[`${s}Template`] || window.JST[`templates/form/${s}`]
   )
+  const schemaSourceAttribute = options.schemaSourceAttribute || 'data-schema-source'
   const schemaAttribute = options.schemaAttribute || 'data-schema'
   const valueAttribute = options.valueAttribute || 'data-values'
   const idAttribute = options.idAttribute || 'data-id'
@@ -36,7 +41,10 @@ widgets.define('json-form', (container, options) => {
   ]
 
   const id = container.getAttribute(idAttribute)
-  const schema = JSON.parse(container.getAttribute(schemaAttribute))
+  const schema = container.hasAttribute(schemaSourceAttribute)
+    ? jsonSourceAttribute(container, schemaSourceAttribute)
+    : jsonAttribute(container, schemaAttribute)
+
   const values = container.hasAttribute(valueAttribute)
     ? JSON.parse(container.getAttribute(valueAttribute))
     : {}
