@@ -17,7 +17,9 @@ export const formRenderer = curry2((options, data) => {
 })
 
 widgets.define('json-form', (container, options) => {
-  const tpl = s => options[`${s}Template`] || window.JST[`templates/form/${s}`]
+  const tpl = options.findTemplate || (s =>
+    options[`${s}Template`] || window.JST[`templates/form/${s}`]
+  )
   const schemaAttribute = options.schemaAttribute || 'data-schema'
   const valueAttribute = options.valueAttribute || 'data-values'
 

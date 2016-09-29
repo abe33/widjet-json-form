@@ -194,4 +194,37 @@ describe('json-form', () => {
       `))
     })
   })
+
+  describe('with a template retrieving function', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'>
+        </div>
+      `
+
+      spy = sinon.spy()
+      target = document.querySelector('[data-schema]')
+
+      document.addEventListener('json-form:ready', spy)
+
+      for (let k in window.JST) {
+        window.JST[k.replace('templates/form', 'tpl')] = window.JST[k]
+        delete window.JST[k]
+      }
+
+      widgets('json-form', '[data-schema]', {
+        on: 'init',
+        findTemplate: s => window.JST[`tpl/${s}`]
+      })
+    })
+
+    it('uses the provided function to render', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>
+          <div class="field string">title:string</div>
+          <div class="field markdown">content:markdown</div>
+        </form>
+      `))
+    })
+  })
 })
