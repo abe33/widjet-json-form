@@ -28,7 +28,7 @@ export const renderArrayField = curry4((tplUl, tplLi, renderObject, opts) => {
 
   const render = i => renderObject({ [i]: itemsType }, opts.value, opts.name)
 
-  const renderItems = (value, i) => tplLi({ content: render(i) })
+  const renderItems = (value, i) => tplLi({ content: render(i), index: i })
 
   return tplUl(merge(opts, { content: (opts.value || []).map(renderItems) }))
 })
