@@ -252,6 +252,36 @@ describe('json-form', () => {
     })
   })
 
+  describe('with a custom id attribute', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
+             data-form-id="foo">
+        </div>
+      `
+
+      window.JST['templates/form/form'] = getTemplate(compactHTML(`
+        <form id="{{ id }}">{{ content }}</div>
+      `))
+      window.JST['templates/form/field'] = getTemplate(compactHTML(`
+        <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
+      `))
+
+      target = document.querySelector('[data-schema]')
+
+      widgets('json-form', '[data-schema]', {on: 'init', idAttribute: 'data-form-id'})
+    })
+
+    it('passes the id so that the renderer uses it for fields id', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form id="foo">
+          <div class="field string" id="foo-title">title:string</div>
+          <div class="field markdown" id="foo-content">content:markdown</div>
+        </form>
+      `))
+    })
+  })
+
   describe('with a custom field id generation method', () => {
     beforeEach(() => {
       document.body.innerHTML = `

@@ -27,12 +27,15 @@ widgets.define('json-form', (container, options) => {
   )
   const schemaAttribute = options.schemaAttribute || 'data-schema'
   const valueAttribute = options.valueAttribute || 'data-values'
+  const idAttribute = options.idAttribute || 'data-id'
 
   const DEFAULT_RENDERERS = [
     [typeIs('object'), renderObjectField(tpl('object'))],
     [typeIs('array'), renderArrayField(tpl('array'), tpl('arrayItem'))],
     [always, renderDefaultField(tpl('field'), t => tpl(t))]
   ]
+
+  const id = container.getAttribute(idAttribute)
   const schema = JSON.parse(container.getAttribute(schemaAttribute))
   const values = container.hasAttribute(valueAttribute)
     ? JSON.parse(container.getAttribute(valueAttribute))
@@ -45,7 +48,6 @@ widgets.define('json-form', (container, options) => {
     renderers: (options.renderers || []).concat(DEFAULT_RENDERERS)
   })
 
-  const id = container.getAttribute('data-id')
   container.appendChild(getNode(render({schema, values, id})))
 
   window.requestAnimationFrame(() =>
