@@ -1,17 +1,20 @@
-import {curry2, curry3, curry4, merge, inputName} from 'widjet-utils'
-import {asTuple, getTypeAndParameters, parameterize} from './utils'
+import {curry2, curry3, curry4, merge, inputName, apply} from 'widjet-utils'
+import {asTuple, getTypeAndParameters} from './utils'
+
+const defaultFieldId = (id, path) => [id].concat(path).join('-')
 
 export const typeIs = curry2((type, opts) => opts.type === type)
 
-export const objectRenderer = ({id: fid, renderField, fieldName}) => {
-  fieldName = fieldName || inputName()
+export const objectRenderer = ({id: fid, renderField, fieldName, fieldId}) => {
+  fieldName = fieldName || apply(inputName())
+  fieldId = fieldId || defaultFieldId
 
   return (schema = {}, values = {}, objectName = []) =>
     asTuple(schema).map(([key, value]) => {
       const attributePath = objectName.concat(key)
-      const name = fieldName(...attributePath)
+      const name = fieldName(attributePath)
+      const id = fieldId(fid, attributePath)
       const [type, parameters] = getTypeAndParameters(value)
-      const id = `${parameterize(name)}-${fid}`
 
       return {
         id, type, parameters, name, attributePath,

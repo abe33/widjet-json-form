@@ -87,11 +87,11 @@ describe('json-form', () => {
       widgets('json-form', '[data-schema]', {on: 'init'})
     })
 
-    it('parses the value and passes them to the widget form', () => {
+    it('passes the id so that the renderer uses it for fields id', () => {
       expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
         <form id="foo">
-          <div class="field string" id="title-foo">title:string</div>
-          <div class="field markdown" id="content-foo">content:markdown</div>
+          <div class="field string" id="foo-title">title:string</div>
+          <div class="field markdown" id="foo-content">content:markdown</div>
         </form>
       `))
     })
@@ -235,7 +235,7 @@ describe('json-form', () => {
 
       widgets('json-form', '[data-schema]', {
         on: 'init',
-        fieldName: (...parts) => parts.join('-')
+        fieldName: (parts) => parts.join('-')
       })
     })
 
@@ -247,6 +247,39 @@ describe('json-form', () => {
             <div class="field string">object-title:string</div>
             <div class="field markdown">object-content:markdown</div>
           </fieldset>
+        </form>
+      `))
+    })
+  })
+
+  describe('with a custom field id generation method', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
+             data-id="foo">
+        </div>
+      `
+
+      window.JST['templates/form/form'] = getTemplate(compactHTML(`
+        <form id="{{ id }}">{{ content }}</div>
+      `))
+      window.JST['templates/form/field'] = getTemplate(compactHTML(`
+        <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
+      `))
+
+      target = document.querySelector('[data-schema]')
+
+      widgets('json-form', '[data-schema]', {
+        on: 'init',
+        fieldId: (id, path) => [id].concat(path).concat('field').join('_')
+      })
+    })
+
+    it('passes the id so that the renderer uses it for fields id', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form id="foo">
+          <div class="field string" id="foo_title_field">title:string</div>
+          <div class="field markdown" id="foo_content_field">content:markdown</div>
         </form>
       `))
     })

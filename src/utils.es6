@@ -31,7 +31,3 @@ export function evaluateKey (key, obj) {
 
   return localValue
 }
-
-export function parameterize (str) {
-  return str.replace(/[\[\]]+/g, '-')
-}

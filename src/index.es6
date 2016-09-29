@@ -13,6 +13,7 @@ export const formRenderer = curry2((options, data) => {
 
   const renderObject = objectRenderer({
     id,
+    fieldId: options.fieldId,
     fieldName: options.fieldName,
     renderField: when(renderers)
   })
@@ -39,6 +40,7 @@ widgets.define('json-form', (container, options) => {
 
   const render = formRenderer({
     formTemplate: tpl('form'),
+    fieldId: options.fieldId,
     fieldName: options.fieldName,
     renderers: (options.renderers || []).concat(DEFAULT_RENDERERS)
   })
