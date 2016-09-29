@@ -11,7 +11,11 @@ export const formRenderer = curry2((options, data) => {
     p, r((a, b, c) => renderObject(a, b, c))
   ])
 
-  const renderObject = objectRenderer(id, when(renderers))
+  const renderObject = objectRenderer({
+    id,
+    fieldName: options.fieldName,
+    renderField: when(renderers)
+  })
 
   return options.formTemplate({ id, content: renderObject(schema, values) })
 })
@@ -35,6 +39,7 @@ widgets.define('json-form', (container, options) => {
 
   const render = formRenderer({
     formTemplate: tpl('form'),
+    fieldName: options.fieldName,
     renderers: (options.renderers || []).concat(DEFAULT_RENDERERS)
   })
 

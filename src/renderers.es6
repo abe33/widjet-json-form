@@ -1,32 +1,37 @@
-import {curry2, curry3, curry4, merge} from 'widjet-utils'
-import {asTuple, fieldName, getTypeAndParameters, parameterize} from './utils'
+import {curry2, curry3, curry4, merge, inputName} from 'widjet-utils'
+import {asTuple, getTypeAndParameters, parameterize} from './utils'
 
 export const typeIs = curry2((type, opts) => opts.type === type)
 
-export const objectRenderer = (fid, renderField) => (schema = {}, values = {}, objectName) =>
-  asTuple(schema).map(([key, value]) => {
-    const id = objectName
-      ? `${parameterize(objectName)}-${key}-${fid}`
-      : `${key}-${fid}`
+export const objectRenderer = ({id: fid, renderField, fieldName}) => {
+  fieldName = fieldName || inputName()
 
-    const name = fieldName(key, objectName)
-    const [type, parameters] = getTypeAndParameters(value)
+  return (schema = {}, values = {}, objectName = []) =>
+    asTuple(schema).map(([key, value]) => {
+      const attributePath = objectName.concat(key)
+      const name = fieldName(...attributePath)
+      const [type, parameters] = getTypeAndParameters(value)
+      const id = `${parameterize(name)}-${fid}`
 
-    return { id, type, parameters, name, attribute: key, value: values[key] }
-  })
-  .map(params => renderField(params))
-  .reduce((memo, str) => memo + str, '')
-
+      return {
+        id, type, parameters, name, attributePath,
+        attribute: key,
+        value: values[key]
+      }
+    })
+    .map(params => renderField(params))
+    .reduce((memo, str) => memo + str, '')
+}
 export const renderObjectField = curry3((tpl, renderObject, opts) =>
   tpl(merge(opts, {
-    content: renderObject(opts.parameters.properties, opts.value, opts.name)
+    content: renderObject(opts.parameters.properties, opts.value, opts.attributePath)
   }))
 )
 
 export const renderArrayField = curry4((tplUl, tplLi, renderObject, opts) => {
   const itemsType = opts.parameters.items
 
-  const render = i => renderObject({ [i]: itemsType }, opts.value, opts.name)
+  const render = i => renderObject({ [i]: itemsType }, opts.value, opts.attributePath)
 
   const renderItems = (value, i) => tplLi({ content: render(i), index: i })
 

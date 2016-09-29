@@ -32,10 +32,6 @@ export function evaluateKey (key, obj) {
   return localValue
 }
 
-export function fieldName (attributeName, objectName) {
-  return objectName ? `${objectName}[${attributeName}]` : attributeName
-}
-
 export function parameterize (str) {
   return str.replace(/[\[\]]+/g, '-')
 }

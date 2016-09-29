@@ -202,10 +202,7 @@ describe('json-form', () => {
         </div>
       `
 
-      spy = sinon.spy()
       target = document.querySelector('[data-schema]')
-
-      document.addEventListener('json-form:ready', spy)
 
       for (let k in window.JST) {
         window.JST[k.replace('templates/form', 'tpl')] = window.JST[k]
@@ -223,6 +220,33 @@ describe('json-form', () => {
         <form>
           <div class="field string">title:string</div>
           <div class="field markdown">content:markdown</div>
+        </form>
+      `))
+    })
+  })
+
+  describe('with a custom field name generation method', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-schema='{"object": {"type": "object", "properties": {"title": "string", "content": {"type": "markdown"}}}}'>
+        </div>
+      `
+      target = document.querySelector('[data-schema]')
+
+      widgets('json-form', '[data-schema]', {
+        on: 'init',
+        fieldName: (...parts) => parts.join('-')
+      })
+    })
+
+    it('uses the provided function to render', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>
+          <fieldset>
+            <legend>object</legend>
+            <div class="field string">object-title:string</div>
+            <div class="field markdown">object-content:markdown</div>
+          </fieldset>
         </form>
       `))
     })
