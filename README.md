@@ -55,7 +55,7 @@ widgets('json-form', '[data-schema]', {on: 'load'})
 
 ```html
 <div data-schema='{"title": "string", "content": "markdown", "publishedAt": "datetime"}'
-     data-values='{"title": "Here&quo;s a title", "content": "Then some content", publishedAt: "2016-09-08T20:35:54.855Z"}'
+     data-values='{"title": "Here&quo;s a title", "content": "Then some content", "publishedAt": "2016-09-08T20:35:54.855Z"}'
      data-id='news-form'>
 </div>
 ```
