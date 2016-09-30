@@ -121,6 +121,8 @@ For instance, here's what a Twig template for the field describe above would loo
 
 By default the widget will look for templates in the `window.JST` object, all templates being named such as `templates/form/<template-name>`. As with most JS templates, a function that takes a parameters object and returns a HTML string is expected.
 
+<span class='text-info'>Note that the default field's template will look for a template according to the field's type. That means that if the type of the field is `boolean`, the field template will try to render the `templates/form/boolean` with the parameters it received. That means concretely that you just have to create a template to allow a new type of input in the form without any other setup.</span>
+
 The default template names being used by the widget are the following:
 
 Name|Path|Description
@@ -161,6 +163,18 @@ Name|Type|Description
 `valueAttribute`|`string`|The attribute to use to look for the values on the target element. Defaults to `data-values`.
 `idAttribute`|`string`|The attribute to use to look for the form's id on the target element. Defaults to `data-id`.
 `renderers`|`array`|An array of custom renderers to be applied before the default ones. See more below about custom renderers.
+
+It's also possible to specify a template for a specific key without specifying a custom template finder function. The default `findTemplate` implementation will look for a property named `<name>Template` on the options object before looking in `window.JST`.
+
+For instance if you just want to use a different template for the form while keeping using the default you can just do:
+
+```js
+widgets('json-form', '[data-schema]', {
+  on: 'load',
+  formTemplate: ({content, id}) =>
+    `<div class='form' id='${id}'>${content}</div>`
+})
+```
 
 ### Custom Renderers
 
