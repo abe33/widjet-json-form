@@ -10,6 +10,42 @@ npm install --save widjet-json-form
 
 ## Usage
 
+The `json-form` widget generates a form in the target element by reading a json schema. Values can be specified for the form to populate the fields.
+
+Two preferred ways are available to define the schema and values for a field:
+
+#### Using Script Tags
+
+```js
+import widgets from 'widjet'
+import 'widjet-json-form'
+
+widgets('json-form', '[data-schema-source]', {on: 'load'})
+```
+
+```html
+<script id='schema' type='application/json'>
+  {
+    "title": "string",
+    "content": "markdown",
+    "publishedAt": "datetime"
+  }
+</script>
+<script id='values' type='application/json'>
+  {
+    "title": "Here's a title",
+    "content": "Then some content",
+    "publishedAt": "2016-09-08T20:35:54.855Z"
+  }
+</script>
+<div data-schema-source='schema'
+     data-values-source='values'
+     data-id='news-form'>
+</div>
+```
+
+#### Using Data Attributes
+
 ```js
 import widgets from 'widjet'
 import 'widjet-json-form'
@@ -24,11 +60,11 @@ widgets('json-form', '[data-schema]', {on: 'load'})
 </div>
 ```
 
-The `json-form` widget generates a form in the target element by reading the schema defined in the element data attributes. Initial values or the base id  for the form and its fields can be passed through data attributes as well.
-
 ### Form Schema
 
-```json
+A form schema is an object whose keys represent the field names and values the field descriptors.
+
+```js
 {
   "property": "type",
 
@@ -37,6 +73,48 @@ The `json-form` widget generates a form in the target element by reading the sch
     "fieldSetting": "whatever"
   }
 }
+```
+
+The simplest ways to define a field is to create a pair `"property": "type"`. In that case no other configuration will be available in the field template.
+
+The other way is to define a pair `"property": object` where the `object` has a mandatory `type` key. Every other properties of that object will be passed to the field's template as its `parameters`, allowing for a finer setup of the field.
+
+Here's an example of a more complete setup for a field of type `integer`:
+
+```js
+{
+  "integerField": {
+    "type": "integer",
+    "hint": "Hint for input of type `integer`. Hints support markdown.",
+    "placeholder": "12345",
+    "min": 0,
+    "max": 1000,
+    "step": 10,
+    "default": 100,
+    "required": true
+  }
+}
+```
+
+It's up to you to support any parameters in your field's input template.
+
+For instance, here's what a Twig template for the field describe above would look like:
+
+```html
+<label for='{{ id }}'>{{ attribute }}{% if not parameters.required %} <em> - Optional</em>{% endif %}</label>
+
+{% if parameters.hint %}{% markdown %}{{ parameters.hint }}{% endmarkdown %}{% endif %}
+
+<input type='number'
+       id='{{ id }}'
+       step='{{ parameters.step|default(1) }}'
+       {% if parameters.min %}min='{{ parameters.min }}'{% endif %}
+       {% if parameters.max %}max='{{ parameters.max }}'{% endif %}
+       value='{{ value|default(parameters.default)|default }}'
+       {% if parameters.placeholder %}placeholder="{{ parameters.placeholder }}"{% endif %}
+       name='{{ name }}'
+       {% if parameters.required %}required{% endif %}>
+</input>
 ```
 
 ### Templates
