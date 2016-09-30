@@ -121,7 +121,7 @@ For instance, here's what a Twig template for the field describe above would loo
 
 By default the widget will look for templates in the `window.JST` object, all templates being named such as `templates/form/<template-name>`. As with most JS templates, a function that takes a parameters object and returns a HTML string is expected.
 
-<span class='text-info'>Note that the default field's template will look for a template according to the field's type. That means that if the type of the field is `boolean`, the field template will try to render the `templates/form/boolean` with the parameters it received. That means concretely that you just have to create a template to allow a new type of input in the form without any other setup.</span>
+Note that the default field's template will look for a template according to the field's type. That means that if the type of the field is `boolean`, the field template will try to render the `templates/form/boolean` with the parameters it received. That means concretely that you just have to create a template to allow a new type of input in the form without any other setup
 
 The default template names being used by the widget are the following:
 
