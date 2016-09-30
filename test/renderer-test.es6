@@ -54,6 +54,12 @@ describe('formRenderer() generated function', () => {
         </form>
       `))
     })
+
+    describe('that does not have a type key in one of its fields', () => {
+      it('raises an exception', () => {
+        expect(() => render({ schema: { field: {} } })).to.throwError(/Field 'field' is missing a 'type' key/)
+      })
+    })
   })
 
   describe('when called without a schema object', () => {

@@ -16,6 +16,8 @@ export const objectRenderer = ({id: fid, renderField, fieldName, fieldId}) => {
       const id = fieldId(fid, attributePath)
       const [type, parameters] = getTypeAndParameters(value)
 
+      if (!type) { throw new Error(`Field '${key}' is missing a 'type' key`) }
+
       return {
         id, type, parameters, name, attributePath,
         attribute: key,
