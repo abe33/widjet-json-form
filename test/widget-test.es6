@@ -41,7 +41,7 @@ describe('json-form', () => {
     })
   })
 
-  describe('with a schema in a script tag and a data-source attribute', () => {
+  describe('with a schema in a script tag and a data-schema-source attribute', () => {
     beforeEach(() => {
       document.body.innerHTML = `
         <script id='source' type='application/json'>
@@ -74,7 +74,6 @@ describe('json-form', () => {
     })
   })
 
-
   describe('with a data-values attribute', () => {
     beforeEach(() => {
       document.body.innerHTML = `
@@ -100,6 +99,49 @@ describe('json-form', () => {
       `))
     })
   })
+
+  describe('with values in a script tag and a data-values-source attribute', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <script id='schema' type='application/json'>
+          {
+            "title": "string",
+            "content": {
+              "type": "markdown"
+            }
+          }
+        </script>
+        <script id='values' type='application/json'>
+          {
+            "title": "foo",
+            "content": "bar"
+          }
+        </script>
+        <div data-schema-source='schema' data-values-source='values'></div>
+      `
+
+      window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
+      window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
+
+      target = document.querySelector('[data-schema-source]')
+
+      widgets('json-form', '[data-schema-source]', {on: 'init'})
+    })
+
+    it('fills the specified target with a form generated using the data provided', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form>
+          <div class="field string">title=foo</div>
+          <div class="field markdown">content=bar</div>
+        </form>
+      `))
+    })
+
+    it('emits a json-form:ready event', () => {
+      expect(spy.called).to.be.ok()
+    })
+  })
+
 
   describe('with a data-id attribute', () => {
     beforeEach(() => {

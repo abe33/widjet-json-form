@@ -7,6 +7,11 @@ const jsonAttribute = (node, attr) => JSON.parse(node.getAttribute(attr))
 const jsonSourceAttribute = (node, attr) =>
   JSON.parse(document.getElementById(node.getAttribute(attr)).textContent)
 
+const jsonData = (node, attr, sourceAttr) =>
+  (node.hasAttribute(sourceAttr)
+    ? jsonSourceAttribute(node, sourceAttr)
+    : jsonAttribute(node, attr)) || {}
+
 export const formRenderer = curry2((options, data) => {
   const {schema, values} = data
   const id = data.id || getNextID()
@@ -31,6 +36,7 @@ widgets.define('json-form', (container, options) => {
   )
   const schemaSourceAttribute = options.schemaSourceAttribute || 'data-schema-source'
   const schemaAttribute = options.schemaAttribute || 'data-schema'
+  const valueSourceAttribute = options.valueSourceAttribute || 'data-values-source'
   const valueAttribute = options.valueAttribute || 'data-values'
   const idAttribute = options.idAttribute || 'data-id'
 
@@ -41,13 +47,8 @@ widgets.define('json-form', (container, options) => {
   ]
 
   const id = container.getAttribute(idAttribute)
-  const schema = container.hasAttribute(schemaSourceAttribute)
-    ? jsonSourceAttribute(container, schemaSourceAttribute)
-    : jsonAttribute(container, schemaAttribute)
-
-  const values = container.hasAttribute(valueAttribute)
-    ? JSON.parse(container.getAttribute(valueAttribute))
-    : {}
+  const schema = jsonData(container, schemaAttribute, schemaSourceAttribute)
+  const values = jsonData(container, valueAttribute, valueSourceAttribute)
 
   const render = formRenderer({
     formTemplate: tpl('form'),
