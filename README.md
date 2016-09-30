@@ -10,11 +10,13 @@ npm install --save widjet-json-form
 
 ## Usage
 
-The `json-form` widget generates a form in the target element by reading a json schema. Values can be specified for the form to populate the fields.
+The `json-form` widget generates form fields in the target element by reading a json schema. Values can be specified for the form to populate the fields.
 
 Two preferred ways are available to define the schema and values for a field:
 
 ### Using Script Tags
+
+Using script tags for schema and values offer the advantages of removing the characters escaping contraints of attributes and readability of indented code at the cost of a heavier markup and the need to have unique ids for every tags.
 
 ```js
 import widgets from 'widjet'
@@ -46,6 +48,8 @@ widgets('json-form', '[data-schema-source]', {on: 'load'})
 
 ### Using Data Attributes
 
+Data attributes offers an easier setup for small forms that doesn't have a lot of settings or complex strings with special characters to escape. It's also more convenient when many forms are to generate on a single space as it doesn't require to inject scripts with unique ids for each forms.
+
 ```js
 import widgets from 'widjet'
 import 'widjet-json-form'
@@ -62,7 +66,7 @@ widgets('json-form', '[data-schema]', {on: 'load'})
 
 ## Form Schema
 
-A form schema is an object whose keys represent the field names, and values the field descriptors.
+A form schema is an object whose keys represent the field names, and its values the field descriptors.
 
 ```js
 {
@@ -75,9 +79,9 @@ A form schema is an object whose keys represent the field names, and values the 
 }
 ```
 
-The simplest ways to define a field is to create a pair `"property": "type"`. In that case no other configuration will be available in the field template.
+The simplest way to define a field is to create a pair `"property": "type"`. In that case no other configuration will be available in the field template.
 
-The other way is to define a pair `"property": object` where the `object` has a mandatory `type` key. Every other properties of that object will be passed to the field's template as its `parameters`, allowing for a finer setup of the field.
+The other way is to define a pair `"property": {object}` where the `object` has a mandatory `type` key. Every other properties of that object will be passed to the field's template as its `parameters`, allowing for a finer setup of the field.
 
 Here's an example of a more complete setup for a field of type `integer`:
 
@@ -96,9 +100,9 @@ Here's an example of a more complete setup for a field of type `integer`:
 }
 ```
 
-It's up to you to support any parameters in your field's input template.
+It's up to you to decide which parameters your field's input template will support. The only requirement is that the field config contains a `type` key.
 
-For instance, here's what a Twig template for the field described above would look like:
+For instance, here's what a [Twig](https://github.com/twigjs/twig.js) template for the field described above look like:
 
 ```html
 <label for='{{ id }}'>{{ attribute }}{% if not parameters.required %} <em> - Optional</em>{% endif %}</label>
@@ -119,34 +123,37 @@ For instance, here's what a Twig template for the field described above would lo
 
 ## Templates
 
-By default the widget will look for templates in the `window.JST` object, all templates being named such as `templates/form/<template-name>`. As with most JS templates, a template is a function that takes a parameters object and that returns a HTML string.
+By default the widget will look for templates in the `window.JST` object, as it's one of the most common places to store javascript templates. All the templates are retrieved using a name such as `json-form/<name>`.
 
-Note that the default field's template will look for a template according to the field's type. That means that if the type of the field is `boolean`, the field template will try to render the `templates/form/boolean` with the parameters it received. That means concretely that you just have to create a template to allow a new type of input in the form without any other setup
+As with most JS templating engine, a template is expected to be a function that takes a parameters object and that returns a HTML string.
+
+Note that the default field's renderer will look for a template according to the field's type. That means that if the type of the field is `boolean`, the field renderer will try to render the `json-form/boolean` with the parameters it received and then pass the result as the `content` parameter to the field template. Concretely, it means that you just have to create a template to allow a new type of input in the form without any other setup
 
 The default template names being used by the widget are the following:
 
 Name|Path|Description
 ---|---|---
-`form`|`templates/form/form`|The wrapper of the whole form, will receive its content through the `content` parameter. It also receives an `id` that corresponds to the `data-id` defined on the target element.
-`field`|`templates/form/field`|The wrapper for a form's field, will receive its content through the `content` parameter as well as the parameters passed to the input (`id`, `name`, `type`, `value`, `attribute`, `attributePath` and `parameters`, see below for a details of what each parameter contains).
-`object`|`templates/form/object`|If the field's type is `object` this template will be used as a wrapper for the whole sub-form instead of the `field` one. It receives the exact same parameters that `field`.
-`array`|`templates/form/array`|If the field's type is `array` this template will be used as a wrapper for all the items in the array. It receives the same parameters as the `field` and `object` templates.
-`arrayItem`|`templates/form/arrayItem`|If the field's type is `array`, the sub-form for each item will be wrapped using this template. The template will receive its `content` and `index` as parameters.
+`form`|`json-form/form`|<p>The wrapper of the whole form.</p><p>Parameters: `content`, `id`</p>
+`field`|`json-form/field`|<p>The wrapper for a form's field.</p><p>Parameters: `content`, `id`, `name`, `type`, `value`, `attribute`, `attributePath`, `parameters`</p>.
+`object`|`json-form/object`|<p>If the field's type is `object` this template will be used as a wrapper for the whole sub-form instead of the `field` one.</p><p>Parameters: `content`, `id`, `name`, `type`, `value`, `attribute`, `attributePath`, `parameters`</p>.
+`array`|`json-form/array`|<p>If the field's type is `array` this template will be used as a wrapper for all the items in the array instead of the `field` one.</p><p>Parameters: `content`, `id`, `name`, `type`, `value`, `attribute`, `attributePath`, `parameters`</p>.
+`arrayItem`|`json-form/arrayItem`|<p>If the field's type is `array`, the sub-form for each item will be wrapped using this template.</p><p>Parameters: `content`, `id`, `name`, `type`, `value`, `attribute`, `attributePath`, `parameters`</p>.
+`<type>`|`json-form/<type>`|<p>Each field types must have their own template.</p><p>Parameters: `id`, `name`, `type`, `value`, `attribute`, `attributePath`, `parameters`</p>.
+
+Defining the templates in the `window.JST` object, or in another object, is up to you. The `json-form` widget doesn't provide any template to let you keep the full control of how forms are rendered.
 
 ### Templates parameters
 
-Templates that render field wrappers and inputs receive a bunch of parameters depending on the context.
-
 Name|Description
 ---|---
-`id`|The id of the element, the id for a field is generated automatically using the id of its parent form and the attribute path. By default the id for a property `age` of the second item of a `users` array in a form with id `company` would be `company-users-1-age`. This can be changed through widget settings.
+`id`|<p>The id of the element.</p><p>For a `form` template, the id is either the value provided in the `data-id` or an auto-incremented number id.</p><p>For field-related templates, the id is generated automatically using the id of its parent form and the attribute path. By default the id for a property `age` of the second item of a `users` array in a form with id `company` would be `company-users-1-age`. This can be changed through the `fieldId` widget setting.
 `type`|The type of the field as defined in the schema.
 `attribute`|The name of the current attribute.
-`attributePath`|An array with every component that form the path to the attribute starting from the schema root. For instance, for the property `age` of the second item of the `users` array, the attribute path is `['users', 1, 'age']`
-`name`|The input name as generated by the `fieldName` function using the attribute path. By default the name for a property `age` of the second item of a `users` array would be `users[1][age]`. This can be changed through widget settings.
-`value`|The value of the field as provided in the `data-values` attribute.
-`parameters`|An object with the parameters of the field as defined in the schema.
-`content`|Wrapper templates will receive the HTML content to wrap in that parameter.
+`attributePath`|An array with every components that form the path to the attribute, starting from the schema root. As an example, for the property `age` of the second item of the `users` array, the attribute path is `['users', 1, 'age']`
+`name`|The input name, as generated by the `fieldName` function using the attribute path. By default the name for a property `age` of the second item of a `users` array would be `users[1][age]`. This can be changed through the `fieldName` widget setting.
+`value`|The value of the field, as provided in the `data-values` attribute.
+`parameters`|An object with the parameters of the field, as defined in the schema.
+`content`|Wrapper templates will receive the HTML content to include in that parameter.
 
 ## Configuration
 
@@ -154,19 +161,21 @@ The widget accepts the following options:
 
 Name|Type|Description
 ---|---|---
-`findTemplate`|`function`|A function that takes the name of a template such as `form` or `array` and must returns a function taking a parameters object and that returns a HTML string.
-`fieldId`|`function`|A function that takes the id of the form and an attribute path and that must returns the string id for it.
+`findTemplate`|`function`|A function that takes the name of a template such as `form` or `array` and must returns a template function taking a parameters object and returning a HTML string.
+`fieldId`|`function`|A function that takes the id of the form and an attribute path and that must returns the string id for the field.
 `fieldName`|`function`|A function that takes an attribute path and that must returns the string name for its input.
-`schemaSourceAttribute`|`string`|The attribute to use to look for the schema script source. Defaults to `data-schema-source`.
-`schemaAttribute`|`string`|The attribute to use to look for the schema on the target element. Defaults to `data-schema`.
-`valueSourceAttribute`|`string`|The attribute to use to look for the values script source. Defaults to `data-values-source`.
-`valueAttribute`|`string`|The attribute to use to look for the values on the target element. Defaults to `data-values`.
-`idAttribute`|`string`|The attribute to use to look for the form's id on the target element. Defaults to `data-id`.
+`schemaSourceAttribute`|`string`|The attribute to use when looking for the schema script source. Defaults to `data-schema-source`. The value of the attribute should always be the id of a script tag
+`schemaAttribute`|`string`|The attribute to use when looking for the schema on the target element. Defaults to `data-schema`.
+`valueSourceAttribute`|`string`|The attribute to use when looking for the values script source. Defaults to `data-values-source`. The value of the attribute should always be the id of a script tag
+`valueAttribute`|`string`|The attribute to use when looking for the values on the target element. Defaults to `data-values`.
+`idAttribute`|`string`|The attribute to use when looking for the form's id on the target element. Defaults to `data-id`.
 `renderers`|`array`|An array of custom renderers to be applied before the default ones. See more below about custom renderers.
+
+The default renderers include renderers for `object`, `array` and the generic `field` renderer.
 
 It's also possible to specify a template for a specific key without specifying a custom template finder function. The default `findTemplate` implementation will look for a property named `<name>Template` on the options object before looking in `window.JST`.
 
-For instance if you just want to use a different template for the form while keeping using the default you can just do:
+For instance if you just want to use a different template for the form while keeping using the defaults one for the other templates you can just do:
 
 ```js
 widgets('json-form', '[data-schema]', {
@@ -178,11 +187,13 @@ widgets('json-form', '[data-schema]', {
 
 ### Custom Renderers
 
-A renderer is defined using two functions in an array. The first function is the predicate that defines whether the renderer applies to the passed-in `type`. The second function is a function returning function or a curried function that takes a `renderObject` function and the field's parameters and returns the field's HTML string.
+A renderer is defined using two functions in an array.
+The first function is the predicate that defines whether the renderer applies to the passed-in `type`.
+The second function is a function returning function or a curried function that takes a `renderObject` function and the field's parameters and returns the field's HTML string.
 
-The `renderObject` that is passed to the rendered is so that you can write renderers that are able to include nested forms (as the default object and array renderers do)
+The `renderObject` function that is passed to the render function is here so that you can write renderers that are able to include nested forms (as the default `object` and `array` renderers do).
 
-When rendering a field, the render engine will loop through all the renderers and call their predicate function with the field's type as argument. The first renderer's predicate to return true with be used and its render function will then be called with the field's parameters object (containing the `id`, `name`, `type`, `value`, `attribute`, `attributePath` and `parameters`).
+When rendering a field, the render engine will loop through all the renderers and call their predicate function with the field's type as argument. The first renderer whose predicate function returns true will be used and its render function will then be called with the field's parameters object (containing the `id`, `name`, `type`, `value`, `attribute`, `attributePath` and `parameters`).
 
 #### Using a Function Returning Function
 
@@ -191,6 +202,7 @@ const dummyRenderer = [
   type => type === 'boolean',
   renderObject => parameters =>
     `<input type="checkbox"
+            value="1"
             name="${parameters.name}"
             id="${parameters.id}"
             ${parameters.value ? 'checked' : ''}>`
@@ -209,6 +221,7 @@ const dummyRenderer = [
   type => type === 'boolean',
   curry2((renderObject, parameters) => {
     return `<input type="checkbox"
+                   value="1"
                    name="${parameters.name}"
                    id="${parameters.id}"
                    ${parameters.value ? 'checked' : ''}>`
