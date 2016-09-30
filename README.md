@@ -62,7 +62,7 @@ widgets('json-form', '[data-schema]', {on: 'load'})
 
 ## Form Schema
 
-A form schema is an object whose keys represent the field names and values the field descriptors.
+A form schema is an object whose keys represent the field names, and values the field descriptors.
 
 ```js
 {
