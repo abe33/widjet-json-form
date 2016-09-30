@@ -9,13 +9,13 @@ export function loadTemplates () {
   beforeEach(() => {
     window.requestAnimationFrame = (fn) => fn()
     window.JST = {
-      'templates/form/form': getTemplate('<form>{{ content }}</form>'),
-      'templates/form/field': getTemplate('<div class="field {{ type }}">{{ content }}</div>'),
-      'templates/form/object': getTemplate('<fieldset><legend>{{ name }}</legend>{{ content }}</fieldset>'),
-      'templates/form/array': getTemplate('<ul>{{ content }}</ul>'),
-      'templates/form/arrayItem': getTemplate('<li>{{ content }}</li>'),
-      'templates/form/string': getTemplate('{{ name }}:string'),
-      'templates/form/markdown': getTemplate('{{ name }}:markdown')
+      'json-form/form': getTemplate('<form>{{ content }}</form>'),
+      'json-form/field': getTemplate('<div class="field {{ type }}">{{ content }}</div>'),
+      'json-form/object': getTemplate('<fieldset><legend>{{ name }}</legend>{{ content }}</fieldset>'),
+      'json-form/array': getTemplate('<ul>{{ content }}</ul>'),
+      'json-form/arrayItem': getTemplate('<li>{{ content }}</li>'),
+      'json-form/string': getTemplate('{{ name }}:string'),
+      'json-form/markdown': getTemplate('{{ name }}:markdown')
     }
   })
 }

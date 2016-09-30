@@ -32,7 +32,7 @@ export const formRenderer = curry2((options, data) => {
 
 widgets.define('json-form', (container, options) => {
   const tpl = options.findTemplate || (s =>
-    options[`${s}Template`] || window.JST[`templates/form/${s}`]
+    options[`${s}Template`] || window.JST[`json-form/${s}`]
   )
   const schemaSourceAttribute = options.schemaSourceAttribute || 'data-schema-source'
   const schemaAttribute = options.schemaAttribute || 'data-schema'

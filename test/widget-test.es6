@@ -82,8 +82,8 @@ describe('json-form', () => {
         </div>
       `
 
-      window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
-      window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
+      window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
+      window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}')
 
       target = document.querySelector('[data-schema]')
 
@@ -120,8 +120,8 @@ describe('json-form', () => {
         <div data-schema-source='schema' data-values-source='values'></div>
       `
 
-      window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
-      window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
+      window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
+      window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}')
 
       target = document.querySelector('[data-schema-source]')
 
@@ -151,10 +151,10 @@ describe('json-form', () => {
         </div>
       `
 
-      window.JST['templates/form/form'] = getTemplate(compactHTML(`
+      window.JST['json-form/form'] = getTemplate(compactHTML(`
         <form id="{{ id }}">{{ content }}</div>
       `))
-      window.JST['templates/form/field'] = getTemplate(compactHTML(`
+      window.JST['json-form/field'] = getTemplate(compactHTML(`
         <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
       `))
 
@@ -253,8 +253,8 @@ describe('json-form', () => {
         </div>
       `
 
-      window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
-      window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
+      window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
+      window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}')
 
       target = document.querySelector('[data-schema]')
 
@@ -281,7 +281,7 @@ describe('json-form', () => {
       target = document.querySelector('[data-schema]')
 
       for (let k in window.JST) {
-        window.JST[k.replace('templates/form', 'tpl')] = window.JST[k]
+        window.JST[k.replace('json-form', 'tpl')] = window.JST[k]
         delete window.JST[k]
       }
 
@@ -336,10 +336,10 @@ describe('json-form', () => {
         </div>
       `
 
-      window.JST['templates/form/form'] = getTemplate(compactHTML(`
+      window.JST['json-form/form'] = getTemplate(compactHTML(`
         <form id="{{ id }}">{{ content }}</div>
       `))
-      window.JST['templates/form/field'] = getTemplate(compactHTML(`
+      window.JST['json-form/field'] = getTemplate(compactHTML(`
         <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
       `))
 
@@ -366,10 +366,10 @@ describe('json-form', () => {
         </div>
       `
 
-      window.JST['templates/form/form'] = getTemplate(compactHTML(`
+      window.JST['json-form/form'] = getTemplate(compactHTML(`
         <form id="{{ id }}">{{ content }}</div>
       `))
-      window.JST['templates/form/field'] = getTemplate(compactHTML(`
+      window.JST['json-form/field'] = getTemplate(compactHTML(`
         <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
       `))
 

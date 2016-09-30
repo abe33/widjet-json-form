@@ -13,21 +13,21 @@ describe('formRenderer() generated function', () => {
 
   beforeEach(() => {
     render = formRenderer({
-      formTemplate: window.JST['templates/form/form'],
+      formTemplate: window.JST['json-form/form'],
       renderers: [
         [
           typeIs('object'),
-          renderObjectField(window.JST['templates/form/object'])
+          renderObjectField(window.JST['json-form/object'])
         ], [
           typeIs('array'),
           renderArrayField(
-            window.JST['templates/form/array'],
-            window.JST['templates/form/arrayItem']
+            window.JST['json-form/array'],
+            window.JST['json-form/arrayItem']
           )
         ], [
           always, renderDefaultField(
-            window.JST['templates/form/field'],
-            type => window.JST[`templates/form/${type}`],
+            window.JST['json-form/field'],
+            type => window.JST[`json-form/${type}`],
           )
         ]
       ]
@@ -118,7 +118,7 @@ describe('formRenderer() generated function', () => {
 
     describe('for primitive items', () => {
       it('generates an array item for each item in the value', () => {
-        window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
+        window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
 
         const html = render({
           schema: {
@@ -142,8 +142,8 @@ describe('formRenderer() generated function', () => {
 
     describe('for object items', () => {
       it('generates an array item for each item in the value', () => {
-        window.JST['templates/form/string'] = getTemplate('{{name}}={{value}}')
-        window.JST['templates/form/markdown'] = getTemplate('{{name}}={{value}}')
+        window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
+        window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}')
 
         const html = render({
           schema: {
