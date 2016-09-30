@@ -48,7 +48,7 @@ widgets('json-form', '[data-schema-source]', {on: 'load'})
 
 ### Using Data Attributes
 
-Data attributes offers an easier setup for small forms that doesn't have a lot of settings or complex strings with special characters to escape. It's also more convenient when many forms are to generate on a single space as it doesn't require to inject scripts with unique ids for each forms.
+Data attributes offers an easier setup for small forms that doesn't have a lot of settings or complex strings with special characters to escape. It's also more convenient when many forms are to be generated on a single page as it doesn't require to inject scripts with unique ids for each forms.
 
 ```js
 import widgets from 'widjet'
