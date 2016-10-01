@@ -30,7 +30,7 @@ export const formRenderer = curry2((options, data) => {
   return options.formTemplate({ id, content: renderObject(schema, values) })
 })
 
-widgets.define('json-form', (container, options) => {
+widgets.define('json-form', (options) => {
   const tpl = options.findTemplate || (s =>
     options[`${s}Template`] || window.JST[`json-form/${s}`]
   )
@@ -46,10 +46,6 @@ widgets.define('json-form', (container, options) => {
     [always, renderDefaultField(tpl('field'), t => tpl(t))]
   ]
 
-  const id = container.getAttribute(idAttribute)
-  const schema = jsonData(container, schemaAttribute, schemaSourceAttribute)
-  const values = jsonData(container, valueAttribute, valueSourceAttribute)
-
   const render = formRenderer({
     formTemplate: tpl('form'),
     fieldId: options.fieldId,
@@ -57,9 +53,15 @@ widgets.define('json-form', (container, options) => {
     renderers: (options.renderers || []).concat(DEFAULT_RENDERERS)
   })
 
-  container.appendChild(getNode(render({schema, values, id})))
+  return (container) => {
+    const id = container.getAttribute(idAttribute)
+    const schema = jsonData(container, schemaAttribute, schemaSourceAttribute)
+    const values = jsonData(container, valueAttribute, valueSourceAttribute)
 
-  window.requestAnimationFrame(() =>
-    widgets.dispatch(container, 'json-form:ready')
-  )
+    container.appendChild(getNode(render({schema, values, id})))
+
+    window.requestAnimationFrame(() =>
+      widgets.dispatch(container, 'json-form:ready')
+    )
+  }
 })
