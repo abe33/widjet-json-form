@@ -1,6 +1,6 @@
 {
   "name": "widjet-json-form",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A widget to generate forms using a json object descriptor",
   "main": "lib/index.js",
   "scripts": {
