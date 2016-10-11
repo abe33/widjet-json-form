@@ -27,7 +27,7 @@ describe('formRenderer() generated function', () => {
         ], [
           always, renderDefaultField(
             window.JST['json-form/field'],
-            type => window.JST[`json-form/${type}`],
+            type => window.JST[`json-form/${type}`]
           )
         ]
       ]

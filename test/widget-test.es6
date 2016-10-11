@@ -2,6 +2,7 @@ import expect from 'expect.js'
 import jsdom from 'mocha-jsdom'
 import widgets from 'widjet'
 import sinon from 'sinon'
+import {setPageContent, getTestRoot} from 'widjet-test-utils/dom'
 
 import {loadTemplates, getTemplate, compactHTML} from './helpers'
 import '../src/index'
@@ -14,13 +15,13 @@ describe('json-form', () => {
 
   describe('with a data-schema attribute', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'>
         </div>
-      `
+      `)
 
       spy = sinon.spy()
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       document.addEventListener('json-form:ready', spy)
 
@@ -43,7 +44,7 @@ describe('json-form', () => {
 
   describe('with a schema in a script tag and a data-schema-source attribute', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <script id='source' type='application/json'>
           {
             "title": "string",
@@ -53,9 +54,9 @@ describe('json-form', () => {
           }
         </script>
         <div data-schema-source='source'></div>
-      `
+      `)
 
-      target = document.querySelector('[data-schema-source]')
+      target = getTestRoot().querySelector('[data-schema-source]')
 
       widgets('json-form', '[data-schema-source]', {on: 'init'})
     })
@@ -76,16 +77,16 @@ describe('json-form', () => {
 
   describe('with a data-values attribute', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
              data-values='{"title": "foo", "content": "bar"}'>
         </div>
-      `
+      `)
 
       window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
       window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}')
 
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       widgets('json-form', '[data-schema]', {on: 'init'})
     })
@@ -102,7 +103,7 @@ describe('json-form', () => {
 
   describe('with values in a script tag and a data-values-source attribute', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <script id='schema' type='application/json'>
           {
             "title": "string",
@@ -118,12 +119,12 @@ describe('json-form', () => {
           }
         </script>
         <div data-schema-source='schema' data-values-source='values'></div>
-      `
+      `)
 
       window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
       window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}')
 
-      target = document.querySelector('[data-schema-source]')
+      target = getTestRoot().querySelector('[data-schema-source]')
 
       widgets('json-form', '[data-schema-source]', {on: 'init'})
     })
@@ -145,11 +146,11 @@ describe('json-form', () => {
 
   describe('with a data-id attribute', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
              data-id="foo">
         </div>
-      `
+      `)
 
       window.JST['json-form/form'] = getTemplate(compactHTML(`
         <form id="{{ id }}">{{ content }}</div>
@@ -158,7 +159,7 @@ describe('json-form', () => {
         <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
       `))
 
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       widgets('json-form', '[data-schema]', {on: 'init'})
     })
@@ -175,12 +176,12 @@ describe('json-form', () => {
 
   describe('with custom renderers in the options', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
         </div>
-      `
+      `)
 
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       widgets('json-form', '[data-schema]', {on: 'init', renderers: [
         [a => true, a => b => 'foo']
@@ -196,12 +197,12 @@ describe('json-form', () => {
 
   describe('with custom templates in the options', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
         </div>
-      `
+      `)
 
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       widgets('json-form', '[data-schema]', {
         on: 'init',
@@ -222,13 +223,13 @@ describe('json-form', () => {
 
   describe('with a custom schema attribute', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-form='{"title": "string", "content": {"type": "markdown"}}'>
         </div>
-      `
+      `)
 
       spy = sinon.spy()
-      target = document.querySelector('[data-form]')
+      target = getTestRoot().querySelector('[data-form]')
 
       document.addEventListener('json-form:ready', spy)
 
@@ -247,16 +248,16 @@ describe('json-form', () => {
 
   describe('with a custom values attribute', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
              data-content='{"title": "foo", "content": "bar"}'>
         </div>
-      `
+      `)
 
       window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
       window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}')
 
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       widgets('json-form', '[data-schema]', {on: 'init', valueAttribute: 'data-content'})
     })
@@ -273,12 +274,12 @@ describe('json-form', () => {
 
   describe('with a template retrieving function', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'>
         </div>
-      `
+      `)
 
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       for (let k in window.JST) {
         window.JST[k.replace('json-form', 'tpl')] = window.JST[k]
@@ -303,11 +304,12 @@ describe('json-form', () => {
 
   describe('with a custom field name generation method', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"object": {"type": "object", "properties": {"title": "string", "content": {"type": "markdown"}}}}'>
         </div>
-      `
-      target = document.querySelector('[data-schema]')
+      `)
+
+      target = getTestRoot().querySelector('[data-schema]')
 
       widgets('json-form', '[data-schema]', {
         on: 'init',
@@ -330,11 +332,11 @@ describe('json-form', () => {
 
   describe('with a custom id attribute', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
              data-form-id="foo">
         </div>
-      `
+      `)
 
       window.JST['json-form/form'] = getTemplate(compactHTML(`
         <form id="{{ id }}">{{ content }}</div>
@@ -343,7 +345,7 @@ describe('json-form', () => {
         <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
       `))
 
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       widgets('json-form', '[data-schema]', {on: 'init', idAttribute: 'data-form-id'})
     })
@@ -360,11 +362,11 @@ describe('json-form', () => {
 
   describe('with a custom field id generation method', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
+      setPageContent(`
         <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
              data-id="foo">
         </div>
-      `
+      `)
 
       window.JST['json-form/form'] = getTemplate(compactHTML(`
         <form id="{{ id }}">{{ content }}</div>
@@ -373,7 +375,7 @@ describe('json-form', () => {
         <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
       `))
 
-      target = document.querySelector('[data-schema]')
+      target = getTestRoot().querySelector('[data-schema]')
 
       widgets('json-form', '[data-schema]', {
         on: 'init',
