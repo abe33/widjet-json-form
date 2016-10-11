@@ -1,9 +1,12 @@
 import {evaluateKey} from '../src/utils'
 
-export const compactHTML = str => str.trim().replace(/>\s+</g, '><')
+const trim = s => s.replace(/^\s+|\s+$/g, '')
+
+export const compactHTML = str =>
+  trim(str).replace(/>\s+</g, '><').toLowerCase()
 
 export const getTemplate = str => data =>
-  str.replace(/\{\{([^}]+)\}\}/g, (m, k) => evaluateKey(k.trim(), data))
+  str.replace(/\{\{([^}]+)\}\}/g, (m, k) => evaluateKey(trim(k), data))
 
 export function loadTemplates () {
   beforeEach(() => {
