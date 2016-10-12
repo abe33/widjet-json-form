@@ -3,9 +3,10 @@ import {getNode, curry2, when, always} from 'widjet-utils'
 import {typeIs, objectRenderer, renderObjectField, renderArrayField, renderDefaultField} from './renderers'
 import {getNextID} from './utils'
 
+const textContent = (n) => n.innerText || n.textContent
 const jsonAttribute = (node, attr) => JSON.parse(node.getAttribute(attr))
 const jsonSourceAttribute = (node, attr) =>
-  JSON.parse(document.getElementById(node.getAttribute(attr)).textContent)
+  JSON.parse(textContent(document.getElementById(node.getAttribute(attr))))
 
 const jsonData = (node, attr, sourceAttr) =>
   (node.hasAttribute(sourceAttr)

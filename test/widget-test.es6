@@ -156,7 +156,7 @@ describe('json-form', () => {
         <form id="{{ id }}">{{ content }}</div>
       `))
       window.JST['json-form/field'] = getTemplate(compactHTML(`
-        <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
+        <div id="{{ id }}" class="field {{ type }}">{{ content }}</div>
       `))
 
       target = getTestRoot().querySelector('[data-schema]')
@@ -167,8 +167,8 @@ describe('json-form', () => {
     it('passes the id so that the renderer uses it for fields id', () => {
       expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
         <form id="foo">
-          <div class="field string" id="foo-title">title:string</div>
-          <div class="field markdown" id="foo-content">content:markdown</div>
+          <div id="foo-title" class="field string">title:string</div>
+          <div id="foo-content" class="field markdown">content:markdown</div>
         </form>
       `))
     })
@@ -342,7 +342,7 @@ describe('json-form', () => {
         <form id="{{ id }}">{{ content }}</div>
       `))
       window.JST['json-form/field'] = getTemplate(compactHTML(`
-        <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
+        <div id="{{ id }}" class="field {{ type }}">{{ content }}</div>
       `))
 
       target = getTestRoot().querySelector('[data-schema]')
@@ -353,8 +353,8 @@ describe('json-form', () => {
     it('passes the id so that the renderer uses it for fields id', () => {
       expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
         <form id="foo">
-          <div class="field string" id="foo-title">title:string</div>
-          <div class="field markdown" id="foo-content">content:markdown</div>
+          <div id="foo-title" class="field string">title:string</div>
+          <div id="foo-content" class="field markdown">content:markdown</div>
         </form>
       `))
     })
@@ -372,7 +372,7 @@ describe('json-form', () => {
         <form id="{{ id }}">{{ content }}</div>
       `))
       window.JST['json-form/field'] = getTemplate(compactHTML(`
-        <div class="field {{ type }}" id="{{ id }}">{{ content }}</div>
+        <div id="{{ id }}" class="field {{ type }}">{{ content }}</div>
       `))
 
       target = getTestRoot().querySelector('[data-schema]')
@@ -386,8 +386,8 @@ describe('json-form', () => {
     it('passes the id so that the renderer uses it for fields id', () => {
       expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
         <form id="foo">
-          <div class="field string" id="foo_title_field">title:string</div>
-          <div class="field markdown" id="foo_content_field">content:markdown</div>
+          <div id="foo_title_field" class="field string">title:string</div>
+          <div id="foo_content_field" class="field markdown">content:markdown</div>
         </form>
       `))
     })
