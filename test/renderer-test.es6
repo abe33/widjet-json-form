@@ -1,15 +1,15 @@
-import expect from 'expect.js'
-import jsdom from 'mocha-jsdom'
-import {always} from 'widjet-utils'
+import expect from 'expect.js';
+import jsdom from 'mocha-jsdom';
+import {always} from 'widjet-utils';
 
-import {formRenderer} from '../src/index'
-import {loadTemplates, getTemplate, compactHTML} from './helpers'
-import {typeIs, renderObjectField, renderArrayField, renderDefaultField} from '../src/renderers'
+import {formRenderer} from '../src/index';
+import {loadTemplates, getTemplate, compactHTML} from './helpers';
+import {typeIs, renderObjectField, renderArrayField, renderDefaultField} from '../src/renderers';
 
 describe('formRenderer() generated function', () => {
-  let render
-  jsdom()
-  loadTemplates()
+  let render;
+  jsdom({url: 'http://localhost'});
+  loadTemplates();
 
   beforeEach(() => {
     render = formRenderer({
@@ -17,22 +17,22 @@ describe('formRenderer() generated function', () => {
       renderers: [
         [
           typeIs('object'),
-          renderObjectField(window.JST['json-form/object'])
+          renderObjectField(window.JST['json-form/object']),
         ], [
           typeIs('array'),
           renderArrayField(
             window.JST['json-form/array'],
             window.JST['json-form/arrayItem']
-          )
+          ),
         ], [
           always, renderDefaultField(
             window.JST['json-form/field'],
             type => window.JST[`json-form/${type}`]
-          )
-        ]
-      ]
-    })
-  })
+          ),
+        ],
+      ],
+    });
+  });
 
   describe('when called with a schema object', () => {
     it('returns the html of the form content', () => {
@@ -41,10 +41,10 @@ describe('formRenderer() generated function', () => {
           title: 'string',
           description: '{"type": "string"}',
           content: {
-            type: 'markdown'
-          }
-        }
-      })
+            type: 'markdown',
+          },
+        },
+      });
 
       expect(html).to.eql(compactHTML(`
         <form>
@@ -52,23 +52,23 @@ describe('formRenderer() generated function', () => {
           <div class="field string">description:string</div>
           <div class="field markdown">content:markdown</div>
         </form>
-      `))
-    })
+      `));
+    });
 
     describe('that does not have a type key in one of its fields', () => {
       it('raises an exception', () => {
-        expect(() => render({ schema: { field: {} } })).to.throwError(/Field 'field' is missing a 'type' key/)
-      })
-    })
-  })
+        expect(() => render({ schema: { field: {} } })).to.throwError(/Field 'field' is missing a 'type' key/);
+      });
+    });
+  });
 
   describe('when called without a schema object', () => {
     it('returns the html for an empty form', () => {
-      const html = render({})
+      const html = render({});
 
-      expect(html).to.eql('<form></form>')
-    })
-  })
+      expect(html).to.eql('<form></form>');
+    });
+  });
 
   describe('when the schema has a field of type object', () => {
     it('wraps the nested fields in a fieldset wrapper', () => {
@@ -80,12 +80,12 @@ describe('formRenderer() generated function', () => {
               title: 'string',
               description: '{"type": "string"}',
               content: {
-                type: 'markdown'
-              }
-            }
-          }
-        }
-      })
+                type: 'markdown',
+              },
+            },
+          },
+        },
+      });
 
       expect(html).to.eql(compactHTML(`
         <form>
@@ -96,9 +96,9 @@ describe('formRenderer() generated function', () => {
             <div class="field markdown">object[content]:markdown</div>
           </fieldset>
         </form>
-      `))
-    })
-  })
+      `));
+    });
+  });
 
   describe('when the schema has a field of type array', () => {
     describe('with no values', () => {
@@ -107,28 +107,28 @@ describe('formRenderer() generated function', () => {
           schema: {
             array: {
               type: 'array',
-              items: 'string'
-            }
-          }
-        })
+              items: 'string',
+            },
+          },
+        });
 
-        expect(html).to.eql('<form><ul></ul></form>')
-      })
-    })
+        expect(html).to.eql('<form><ul></ul></form>');
+      });
+    });
 
     describe('for primitive items', () => {
       it('generates an array item for each item in the value', () => {
-        window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
+        window.JST['json-form/string'] = getTemplate('{{name}}={{value}}');
 
         const html = render({
           schema: {
             array: {
               type: 'array',
-              items: 'string'
-            }
+              items: 'string',
+            },
           },
-          values: { array: ['foo'] }
-        })
+          values: { array: ['foo'] },
+        });
 
         expect(html).to.eql(compactHTML(`
           <form>
@@ -136,14 +136,14 @@ describe('formRenderer() generated function', () => {
               <li><div class="field string">array[0]=foo</div></li>
             </ul>
           </form>
-        `))
-      })
-    })
+        `));
+      });
+    });
 
     describe('for object items', () => {
       it('generates an array item for each item in the value', () => {
-        window.JST['json-form/string'] = getTemplate('{{name}}={{value}}')
-        window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}')
+        window.JST['json-form/string'] = getTemplate('{{name}}={{value}}');
+        window.JST['json-form/markdown'] = getTemplate('{{name}}={{value}}');
 
         const html = render({
           schema: {
@@ -154,15 +154,15 @@ describe('formRenderer() generated function', () => {
                 properties: {
                   title: 'string',
                   description: '{"type": "string"}',
-                  content: { type: 'markdown' }
-                }
-              }
-            }
+                  content: { type: 'markdown' },
+                },
+              },
+            },
           },
           values: {
-            array: [ {title: 'foo', description: 'baz', content: 'bar'} ]
-          }
-        })
+            array: [{title: 'foo', description: 'baz', content: 'bar'}],
+          },
+        });
 
         expect(html).to.eql(compactHTML(`
           <form>
@@ -177,8 +177,8 @@ describe('formRenderer() generated function', () => {
               </li>
             </ul>
           </form>
-        `))
-      })
-    })
-  })
-})
+        `));
+      });
+    });
+  });
+});
