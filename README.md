@@ -19,10 +19,10 @@ Two preferred ways are available to define the schema and values for a field:
 Using script tags for schema and values offer the advantages of removing the characters escaping contraints of attributes and readability of indented code at the cost of a heavier markup and the need to have unique ids for every tags.
 
 ```js
-import widgets from 'widjet'
-import 'widjet-json-form'
+import widgets from 'widjet';
+import 'widjet-json-form';
 
-widgets('json-form', '[data-schema-source]', {on: 'load'})
+widgets('json-form', '[data-schema-source]', {on: 'load'});
 ```
 
 ```html
@@ -51,10 +51,10 @@ widgets('json-form', '[data-schema-source]', {on: 'load'})
 Data attributes offers an easier setup for small forms that doesn't have a lot of settings or complex strings with special characters to escape. It's also more convenient when many forms are to be generated on a single page as it doesn't require to inject scripts with unique ids for each forms.
 
 ```js
-import widgets from 'widjet'
-import 'widjet-json-form'
+import widgets from 'widjet';
+import 'widjet-json-form';
 
-widgets('json-form', '[data-schema]', {on: 'load'})
+widgets('json-form', '[data-schema]', {on: 'load'});
 ```
 
 ```html
@@ -68,7 +68,7 @@ widgets('json-form', '[data-schema]', {on: 'load'})
 
 A form schema is an object whose keys represent the field names, and its values the field descriptors.
 
-```js
+```json
 {
   "property": "type",
 
@@ -85,7 +85,7 @@ The other way is to define a pair `"property": {object}` where the `object` has 
 
 Here's an example of a more complete setup for a field of type `integer`:
 
-```js
+```json
 {
   "integerField": {
     "type": "integer",
@@ -181,8 +181,8 @@ For instance if you just want to use a different template for the form while kee
 widgets('json-form', '[data-schema]', {
   on: 'load',
   formTemplate: ({content, id}) =>
-    `<div class='form' id='${id}'>${content}</div>`
-})
+    `<div class='form' id='${id}'>${content}</div>`,
+});
 ```
 
 ### Custom Renderers
@@ -205,13 +205,13 @@ const dummyRenderer = [
             value="1"
             name="${parameters.name}"
             id="${parameters.id}"
-            ${parameters.value ? 'checked' : ''}>`
-]
+            ${parameters.value ? 'checked' : ''}>`,
+];
 
 widgets('json-form', '[data-schema]', {
   on: 'load',
-  renderers: [dummyRenderer]
-})
+  renderers: [dummyRenderer],
+});
 ```
 
 #### Using a Curried Function
@@ -224,12 +224,12 @@ const dummyRenderer = [
                    value="1"
                    name="${parameters.name}"
                    id="${parameters.id}"
-                   ${parameters.value ? 'checked' : ''}>`
-  })
-]
+                   ${parameters.value ? 'checked' : ''}>`;
+  }),
+];
 
 widgets('json-form', '[data-schema]', {
   on: 'load',
-  renderers: [dummyRenderer]
-})
+  renderers: [dummyRenderer],
+});
 ```
