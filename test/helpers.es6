@@ -17,7 +17,11 @@ export function loadTemplates() {
       'json-form/object': getTemplate('<fieldset><legend>{{ name }}</legend>{{ content }}</fieldset>'),
       'json-form/array': getTemplate('<ul>{{ content }}</ul>'),
       'json-form/arrayItem': getTemplate('<li>{{ content }}</li>'),
+      'json-form/composite': getTemplate('<dl>{{ content }}</dl>'),
+      'json-form/compositeItem': getTemplate('<dd>{{ content }}</dd>'),
       'json-form/string': getTemplate('{{ name }}:string'),
+      'json-form/integer': getTemplate('{{ name }}:integer'),
+      'json-form/null': getTemplate('{{ name }}:null'),
       'json-form/markdown': getTemplate('{{ name }}:markdown'),
     };
   });

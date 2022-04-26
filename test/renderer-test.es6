@@ -4,7 +4,14 @@ import {always} from 'widjet-utils';
 
 import {formRenderer} from '../src/index';
 import {loadTemplates, getTemplate, compactHTML} from './helpers';
-import {typeIs, renderObjectField, renderArrayField, renderDefaultField} from '../src/renderers';
+import {
+  typeIs,
+  typeIsComposite,
+  renderObjectField,
+  renderArrayField,
+  renderCompositeField,
+  renderDefaultField,
+} from '../src/renderers';
 
 describe('formRenderer() generated function', () => {
   let render;
@@ -12,6 +19,11 @@ describe('formRenderer() generated function', () => {
   loadTemplates();
 
   beforeEach(() => {
+    const renderDefault = renderDefaultField(
+      window.JST['json-form/field'],
+      type => window.JST[`json-form/${type}`]
+    );
+
     render = formRenderer({
       formTemplate: window.JST['json-form/form'],
       renderers: [
@@ -22,13 +34,15 @@ describe('formRenderer() generated function', () => {
           typeIs('array'),
           renderArrayField(
             window.JST['json-form/array'],
-            window.JST['json-form/arrayItem']
-          ),
+            window.JST['json-form/arrayItem']),
         ], [
-          always, renderDefaultField(
-            window.JST['json-form/field'],
-            type => window.JST[`json-form/${type}`]
-          ),
+          typeIsComposite,
+          renderCompositeField(
+            window.JST['json-form/composite'],
+            window.JST['json-form/compositeItem'],
+            renderDefault),
+        ], [
+          always, renderDefault,
         ],
       ],
     });
@@ -176,6 +190,33 @@ describe('formRenderer() generated function', () => {
                 </fieldset>
               </li>
             </ul>
+          </form>
+        `));
+      });
+    });
+  });
+
+  describe('when the schema has a field of type composite', () => {
+    describe('with no values', () => {
+      it('generates a list of all allowed types', () => {
+        const html = render({
+          schema: {
+            composite: {
+              type: ['string', 'integer', 'null'],
+            },
+          },
+          values: {
+            composite: 10,
+          },
+        });
+
+        expect(html).to.eql(compactHTML(`
+          <form>
+            <dl>
+              <dd><div class="field string">composite:string</div></dd>
+              <dd><div class="field integer">composite:integer</div></dd>
+              <dd><div class="field null">composite:null</div></dd>
+            </dl>
           </form>
         `));
       });
