@@ -169,12 +169,28 @@ describe('formRenderer() generated function', () => {
                   title: 'string',
                   description: '{"type": "string"}',
                   content: { type: 'markdown' },
+                  tags: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        label: 'string',
+                      },
+                    },
+                  },
                 },
               },
             },
           },
           values: {
-            array: [{title: 'foo', description: 'baz', content: 'bar'}],
+            array: [
+              {
+                title: 'foo',
+                description: 'baz',
+                content: 'bar',
+                tags: [{label: 'tag-label'}, {label: 'other-tag-label'}],
+              },
+            ],
           },
         });
 
@@ -187,6 +203,20 @@ describe('formRenderer() generated function', () => {
                   <div class="field string">array[0][title]=foo</div>
                   <div class="field string">array[0][description]=baz</div>
                   <div class="field markdown">array[0][content]=bar</div>
+                  <ul>
+                    <li>
+                      <fieldset>
+                        <legend>array[0][tags][0]</legend>
+                        <div class="field string">array[0][tags][0][label]=tag-label</div>
+                      </fieldset>
+                    </li>
+                    <li>
+                      <fieldset>
+                        <legend>array[0][tags][1]</legend>
+                        <div class="field string">array[0][tags][1][label]=other-tag-label</div>
+                      </fieldset>
+                    </li>
+                  </ul>
                 </fieldset>
               </li>
             </ul>

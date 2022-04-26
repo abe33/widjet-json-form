@@ -44,7 +44,7 @@ export const renderArrayField = curry4((tplUl, tplLi, renderObject, opts) => {
 
   const renderItems = (value, i) => tplLi({ content: render(i), index: i });
 
-  return tplUl(merge(opts, { content: (opts.value || []).map(renderItems) }));
+  return tplUl(merge(opts, { content: (opts.value || []).map(renderItems).join('') }));
 });
 
 export const renderCompositeField = curryN(5, (tplUl, tplLi, renderField, rO, opts) => {
