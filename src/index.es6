@@ -16,15 +16,17 @@ const jsonData = (node, attr, sourceAttr) =>
 export const formRenderer = curry2((options, data) => {
   const {schema, values} = data;
   const id = data.id || getNextID();
+  const rootAttributePath = data.rootAttributePath || [];
 
   const renderers = options.renderers.map(([p, r]) => [
-    p, r((a, b, c) => renderObject(a, b, c)),
+    p, r((a, b, c, d) => renderObject(a, b, c, d)),
   ]);
 
   const renderObject = objectRenderer({
     id,
     fieldId: options.fieldId,
     fieldName: options.fieldName,
+    rootAttributePath: rootAttributePath,
     renderField: when(renderers),
   });
 
@@ -58,8 +60,11 @@ widgets.define('json-form', (options) => {
     const id = container.getAttribute(idAttribute);
     const schema = jsonData(container, schemaAttribute, schemaSourceAttribute);
     const values = jsonData(container, valueAttribute, valueSourceAttribute);
+    const rootAttributePath = container.dataset.rootAttributePath
+      ? container.dataset.rootAttributePath.split(',')
+      : [];
 
-    container.appendChild(getNode(render({schema, values, id})));
+    container.appendChild(getNode(render({schema, values, id, rootAttributePath})));
 
     window.requestAnimationFrame(() =>
       widgets.dispatch(container, 'json-form:ready')

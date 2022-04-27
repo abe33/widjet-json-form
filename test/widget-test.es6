@@ -402,4 +402,35 @@ describe('json-form', () => {
       `));
     });
   });
+
+  describe('with a custom root attribute path', () => {
+    beforeEach(() => {
+      setPageContent(`
+        <div data-schema='{"title": "string", "content": {"type": "markdown"}}'
+             data-id="foo"
+             data-root-attribute-path="root">
+        </div>
+      `);
+
+      window.JST['json-form/form'] = getTemplate(compactHTML(`
+        <form id="{{ id }}">{{ content }}</div>
+      `));
+      window.JST['json-form/field'] = getTemplate(compactHTML(`
+        <div id="{{ id }}" class="field {{ type }}">{{ content }}</div>
+      `));
+
+      target = getTestRoot().querySelector('[data-schema]');
+
+      widgets('json-form', '[data-schema]', {on: 'init'});
+    });
+
+    it('prepend the custom root attribute path to id and name', () => {
+      expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
+        <form id="foo">
+          <div id="foo-root-title" class="field string">root[title]:string</div>
+          <div id="foo-root-content" class="field markdown">root[content]:markdown</div>
+        </form>
+      `));
+    });
+  });
 });
