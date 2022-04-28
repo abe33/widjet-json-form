@@ -424,7 +424,7 @@ describe('json-form', () => {
       widgets('json-form', '[data-schema]', {on: 'init'});
     });
 
-    it('prepend the custom root attribute path to id and name', () => {
+    it('prepends the custom root attribute path to id and name', () => {
       expect(compactHTML(target.innerHTML)).to.eql(compactHTML(`
         <form id="foo">
           <div id="foo-root-title" class="field string">root[title]:string</div>

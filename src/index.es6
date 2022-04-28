@@ -26,11 +26,10 @@ export const formRenderer = curry2((options, data) => {
     id,
     fieldId: options.fieldId,
     fieldName: options.fieldName,
-    rootAttributePath: rootAttributePath,
     renderField: when(renderers),
   });
 
-  return options.formTemplate({ id, content: renderObject(schema, values) });
+  return options.formTemplate({ id, content: renderObject(schema, values, rootAttributePath) });
 });
 
 widgets.define('json-form', (options) => {

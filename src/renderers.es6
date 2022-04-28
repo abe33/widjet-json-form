@@ -7,14 +7,14 @@ export const typeIs = curry2((type, opts) => opts.type === type);
 export const typeIsComposite = (opts) =>
   typeof opts.type == 'object' && Array.isArray(opts.type);
 
-export const objectRenderer = ({id: fid, renderField, fieldName, fieldId, rootAttributePath}) => {
+export const objectRenderer = ({id: fid, renderField, fieldName, fieldId}) => {
   fieldName = fieldName || apply(inputName());
   fieldId = fieldId || defaultFieldId;
 
   return (schema = {}, values = {}, objectName = []) =>
     asTuple(schema)
       .map(([key, value]) => {
-        const attributePath = rootAttributePath.concat(objectName.concat(key));
+        const attributePath = objectName.concat(key);
         const name = fieldName(attributePath);
         const id = fieldId(fid, attributePath);
         const [type, parameters] = getTypeAndParameters(value);
